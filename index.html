@@ -371,9 +371,10 @@ async function loadLists(force){
   if (!getKey()){ showLogin(); return; }
   if (!lists) showNote('<div class="spin"></div>Lists load ho rahi hain...');
   try{
-    const d = await api({action:'lists'});
+    const d = await api({action:'lists', fresh: force ? 1 : 0});
     if (!d.ok){ if (!lists) showNote(esc(d.error || 'Kuch masla aa gaya'), true); else toast(d.error || 'Refresh nahi hua'); return; }
     lists = {out:d.out, last:d.last, lastDate:d.lastDate, hl:d.hl}; listsAt = Date.now();
+    try{ localStorage.setItem('rw_lists', JSON.stringify(lists)); }catch(e){}
     setHl(d.hlSet);
     if (view === 'list') renderList();
   }catch(e){
@@ -400,13 +401,48 @@ function liHTML(o){
     + '</div>';
 }
 function currentArr(){ return !lists ? [] : (tab === 'out' ? lists.out : tab === 'last' ? lists.last : lists.hl); }
+/* ---------- PDF download (Out for Delivery / Highlighted) ---------- */
+function loadScript(src){
+  return new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => no(new Error('load')); document.head.appendChild(el); });
+}
+async function downloadPdf(which){
+  const hl = which === 'hl';
+  const arr = hl ? lists.hl : lists.out;
+  if (!arr.length){ toast('List khali hai'); return; }
+  toast('PDF ban rahi hai...');
+  try{
+    if (!(window.jspdf && window.jspdf.jsPDF)){
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+    }
+    const doc = new window.jspdf.jsPDF({orientation:'portrait', unit:'pt', format:'a4'});
+    const pad = n => String(n).padStart(2, '0'), now = new Date();
+    const day = pad(now.getDate()) + '-' + pad(now.getMonth() + 1) + '-' + now.getFullYear();
+    const title = hl ? 'Highlighted Orders' : 'Out for Delivery';
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.text('Royal Welcome - ' + title, 40, 42);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.text(day + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + '   |   ' + arr.length + ' orders   |   Total COD: Rs ' + sumCod(arr).toLocaleString('en-US'), 40, 58);
+    const head = ['#', 'Order No', 'Name', 'City', 'Amount', 'Tracking ID', 'Booking Date'].concat(hl ? ['Status'] : []);
+    const body = arr.map((o, i) => [i + 1, o.orderNo, o.name || '', o.city || '', 'Rs ' + (o.cod || 0), o.tracking || '-', o.date || '']
+      .concat(hl ? [statusInfo(o).text] : []));
+    doc.autoTable({
+      head: [head], body: body, startY: 70, theme: 'grid',
+      styles: {fontSize: hl ? 8 : 9, cellPadding: 4},
+      headStyles: {fillColor: [15, 31, 61], textColor: [200, 162, 74]},
+      alternateRowStyles: {fillColor: [245, 247, 251]},
+      columnStyles: {0: {cellWidth: 22}, 4: {halign: 'right'}}
+    });
+    doc.save((hl ? 'Highlighted_Orders_' : 'Out_for_Delivery_') + day + '.pdf');
+  }catch(e){ toast('PDF nahi ban saki. Internet check karein.'); }
+}
+
 function renderList(){
   view = 'list'; $('bar').classList.remove('show');
   if (!lists){ showNote('<div class="spin"></div>Lists load ho rahi hain...'); return; }
   const arr = currentArr();
   let h = '<div class="tabs">'
     + tabBtn('out', lists.out.length, 'Out for Delivery')
-    + tabBtn('last', lists.last.length, 'Recent Order')
+    + tabBtn('last', lists.last.length, 'Aakhri Date')
     + tabBtn('hl', lists.hl.length, 'Highlighted')
     + '</div>';
 
@@ -414,7 +450,7 @@ function renderList(){
   if (tab === 'out')       sum = arr.length + ' parcel &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
   else if (tab === 'last') sum = esc(lists.lastDate || '-') + ' &middot; ' + arr.length + ' orders &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
   else                     sum = arr.length + ' highlighted. Star dabane se list se hat jayega.';
-  h += '<div class="sum"><span>' + sum + '</span><button type="button" class="refresh" id="refresh">Refresh</button></div>';
+  h += '<div class="sum"><span>' + sum + '</span><span>' + (tab !== 'last' && arr.length ? '<button type="button" class="refresh" id="dl">PDF</button> ' : '') + '<button type="button" class="refresh" id="refresh">Refresh</button></span></div>';
 
   if (!arr.length){
     const msg = tab === 'out' ? 'Abhi koi order Out for Delivery nahi hai.'
@@ -428,6 +464,7 @@ function renderList(){
 
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; renderList(); }));
   $('refresh').addEventListener('click', () => { toast('Refresh ho raha hai...'); loadLists(true); });
+  if ($('dl')) $('dl').addEventListener('click', () => downloadPdf(tab));
   document.querySelectorAll('.li').forEach(el => el.addEventListener('click', e => {
     const o = currentArr().find(x => digits(x.orderNo) === el.dataset.no);
     if (!o) return;
@@ -524,7 +561,7 @@ $('loginForm').addEventListener('submit', e => {
   setKey(k); $('keyInput').value = ''; $('login').classList.remove('show');
   if ($('q').value) search($('q').value); else loadLists(true);
 });
-$('logout').addEventListener('click', () => { clearKey(); lists = null; orders = []; $('main').innerHTML = ''; $('bar').classList.remove('show'); showLogin(); });
+$('logout').addEventListener('click', () => { clearKey(); try{ localStorage.removeItem('rw_lists'); }catch(e){} lists = null; orders = []; $('main').innerHTML = ''; $('bar').classList.remove('show'); showLogin(); });
 
 /* ---------- install as app ---------- */
 let installEvt = null;
@@ -546,7 +583,8 @@ if ('serviceWorker' in navigator){
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && view === 'list' && lists && Date.now() - listsAt > 120000) loadLists(true);
 });
-if (!getKey()) showLogin(); else loadLists(true);
+try{ const c = JSON.parse(localStorage.getItem('rw_lists') || 'null'); if (c && c.out && c.last && c.hl){ lists = c; setHl(c.hl.map(o => digits(o.orderNo))); } }catch(e){}
+if (!getKey()) showLogin(); else { if (lists) renderList(); loadLists(true); }
 </script>
 </body>
 </html>
