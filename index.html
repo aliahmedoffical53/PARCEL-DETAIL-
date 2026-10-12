@@ -189,25 +189,88 @@ main{padding:16px 14px 0;max-width:560px;margin:0 auto}
 .login input:focus{outline:none;border-color:var(--gold)}
 .login button{margin-top:12px;width:100%;height:50px;border:0;border-radius:12px;background:var(--gold);color:var(--navy);font-weight:800;font-size:16px}
 .login .e{color:#FFB4AA;font-size:13px;min-height:18px;margin-top:8px}
+
+/* ===== clean professional theme ===== */
+:root{--bg:#F2F4F8;--line:#E6EAF1;--ink:#1B2740;--muted:#6B778C;--shadow:0 1px 2px rgba(15,31,61,.06),0 2px 8px rgba(15,31,61,.05)}
+body{background:var(--bg);font-size:14.5px}
+.top{border-bottom:0;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 16px;border-radius:0 0 20px 20px}
+.brand{align-items:center}
+.bl{display:flex;align-items:center;gap:10px;min-width:0}
+.bl img{width:36px;height:36px;border-radius:10px;flex:0 0 auto}
+.brand h1{font-size:16px;font-weight:700;letter-spacing:0;line-height:1.2}
+.bl small{display:block;color:#9FB0D0;font-size:12px;font-weight:500;margin-top:1px}
+.br{display:flex;gap:6px}
+.brand button{color:#C5D0E6;font-size:12.5px;font-weight:600;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:6px 10px}
+.search{margin-top:14px}
+.search input{height:46px;border-radius:12px;font-size:16px;padding:0 14px}
+.search button{height:46px;border-radius:12px;font-size:15px;font-weight:700;padding:0 18px}
+main{padding:16px 14px 0}
+.tabs{display:flex;gap:2px;background:#E3E8F0;padding:4px;border-radius:12px;margin-bottom:12px}
+.tab{flex:1;border:0;background:transparent;border-radius:9px;padding:7px 2px;color:var(--muted)}
+.tab b{font-size:17px;color:var(--ink)}
+.tab span{font-size:11px;font-weight:600}
+.tab.on{background:#fff;box-shadow:var(--shadow)}
+.tab.on b{color:var(--navy)}
+.tab.on span{color:var(--ink)}
+.sum{font-size:12.5px;margin-bottom:10px}
+.sum .refresh,.copy{border:1px solid #D3DAE6;background:#fff;color:var(--navy);border-radius:8px;padding:5px 11px;font-weight:600;font-size:12px}
+.li{border:0;box-shadow:var(--shadow);border-radius:14px;padding:12px 6px 12px 14px;margin-bottom:10px}
+.li.hl{border-left:0;padding-left:14px;box-shadow:inset 3px 0 0 var(--gold),var(--shadow)}
+.li-top b{font-size:15.5px;font-weight:700}
+.li-note{margin-top:6px;font-size:12.5px;color:#5C4A12;background:#FBF5E3;border-radius:8px;padding:5px 9px;white-space:normal;word-break:break-word}
+.li-note i{font-style:normal;font-weight:700}
+.pill{font-weight:700;font-size:11.5px;padding:4px 10px}
+.card{border:0;box-shadow:var(--shadow)}
+.head .ono{font-size:26px;font-weight:700}
+.row dd{font-weight:600}
+.row dd.cod{font-size:18px}
+.msg{border:1px solid var(--line);background:#F7F9FC}
+.msg h3{color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.hlnote{margin:8px 14px 4px;background:#FBF5E3;border-radius:12px;padding:11px 14px}
+.hlnote .lbl{font-weight:700;color:#7B6212;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+.hlnote p{margin:4px 0 8px;font-size:14px;word-break:break-word}
+.hlnote p:last-child{margin-bottom:0}
+.bar{border:0;box-shadow:0 -4px 16px rgba(15,31,61,.08)}
+.bar a{height:48px;font-weight:700;font-size:15px}
+.login{background:linear-gradient(160deg,#0F1F3D,#182C52)}
+.login form{background:#fff;color:var(--ink);padding:26px 22px;border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.login .lg{width:64px;height:64px;border-radius:16px;display:block;margin:0 auto 12px}
+.login h2{text-align:center;font-size:20px;font-weight:700}
+.login p{text-align:center;color:var(--muted);margin:2px 0 18px;font-size:13.5px}
+.login input{border:1.5px solid var(--line);background:#F7F9FC;margin-bottom:10px}
+.login .e{color:var(--bad);text-align:center;margin-top:0}
+.login button{background:var(--navy);color:#fff;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(15,31,61,.5);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.modal.show{display:flex}
+.msheet{background:#fff;width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.msheet h3{margin:0 0 10px;font-size:16px}
+.msheet textarea{width:100%;min-height:90px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;resize:vertical}
+.msheet textarea:focus{outline:none;border-color:var(--navy)}
+.mbtns{display:flex;gap:10px;margin-top:12px}
+.mbtns button{flex:1;height:46px;border-radius:12px;border:0;font-weight:700;font-size:15px}
+#mCancel{background:#EEF1F6;color:var(--ink)}
+#mSave{background:var(--navy);color:#fff}
 </style>
 </head>
 <body>
 
 <div class="login" id="login">
   <form id="loginForm">
+    <img class="lg" src="icon-192.png" alt="">
     <h2>Royal Welcome</h2>
-    <p>Team password likhein</p>
+    <p>Apna username aur password likhein</p>
+    <input id="userInput" type="text" autocomplete="username" autocapitalize="none" placeholder="Username" required>
     <input id="keyInput" type="password" autocomplete="current-password" placeholder="Password" required>
     <div class="e" id="loginErr"></div>
-    <button type="submit">Open</button>
+    <button type="submit">Login</button>
   </form>
 </div>
 
 <header class="top">
   <div class="brand">
-    <h1>Order Inspector <span>Royal Welcome</span></h1>
-    <div>
-      <button id="install" type="button" hidden style="color:var(--gold);font-weight:700;margin-right:12px">Install app</button>
+    <div class="bl"><img src="icon-192.png" alt=""><div><h1>Order Inspector</h1><small id="who">Royal Welcome</small></div></div>
+    <div class="br">
+      <button id="install" type="button" hidden>Install</button>
       <button id="logout" type="button">Logout</button>
     </div>
   </div>
@@ -230,6 +293,14 @@ main{padding:16px 14px 0;max-width:560px;margin:0 auto}
   </a>
 </nav>
 
+<div class="modal" id="modal">
+  <div class="msheet">
+    <h3 id="mTitle">Highlight note</h3>
+    <textarea id="mNote" maxlength="300" placeholder="Kis wajah se highlight kiya? (optional)"></textarea>
+    <div class="mbtns"><button type="button" id="mCancel">Cancel</button><button type="button" id="mSave">Save</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -248,11 +319,18 @@ let view = 'list';                   // 'list' | 'detail'
 let lists = null, listsAt = 0;       // {out, last, lastDate, hl}
 let tab = 'out';
 let hlSet = new Set();
+let me = {name:'', admin:false}, myNotes = {};
 let listScroll = 0;
 
 function getKey(){ try{ return localStorage.getItem('rw_key') || ''; }catch(e){ return ''; } }
 function setKey(k){ try{ localStorage.setItem('rw_key', k); }catch(e){} }
 function clearKey(){ try{ localStorage.removeItem('rw_key'); }catch(e){} }
+function getUser(){ try{ return localStorage.getItem('rw_user') || ''; }catch(e){ return ''; } }
+function setUser(u){ try{ localStorage.setItem('rw_user', u); }catch(e){} }
+function setWho(){
+  const n = me.name || getUser();
+  $('who').textContent = n ? n.charAt(0).toUpperCase() + n.slice(1) + (me.admin ? ' \u00b7 Admin' : '') : 'Royal Welcome';
+}
 
 function esc(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -270,15 +348,17 @@ function toast(t){
 
 /* ---------- API ---------- */
 async function api(params){
-  const key = getKey();
-  if (!key){ showLogin(); throw new Error('nokey'); }
-  const qs = new URLSearchParams(Object.assign({key: key}, params)).toString();
+  const key = getKey(), u = getUser();
+  if (!key || !u){ showLogin(); throw new Error('nokey'); }
+  const qs = new URLSearchParams(Object.assign({u: u, key: key}, params)).toString();
   const r = await fetch(API_URL + '?' + qs);
   const d = await r.json();
-  if (!d.ok && /Password/i.test(d.error || '')){ clearKey(); showLogin('Password galat hai'); }
+  if (d.me){ me = d.me; try{ localStorage.setItem('rw_admin', me.admin ? '1' : '0'); }catch(e){} setWho(); }
+  if (!d.ok && /Password/i.test(d.error || '')){ clearKey(); showLogin(d.error); }
   return d;
 }
 function setHl(arr){ hlSet = new Set((arr || []).map(String)); }
+function setNotes(d){ myNotes = d.notes || {}; }
 
 /* ---------- status ---------- */
 function statusInfo(o){
@@ -286,6 +366,7 @@ function statusInfo(o){
   if (s === 'DELIVERED') return {cls:'ok',  text:'Delivered'};
   if (s === 'RETURNED')  return {cls:'bad', text:'Returned'};
   if (['CANCAL','CANCELLED','CANCELED'].includes(s)) return {cls:'bad', text:'Cancelled'};
+  if (s.indexOf('RETURN') !== -1) return {cls:'bad', text:o.status};
   if (s.indexOf('OUT FOR') !== -1) return {cls:'run', text:o.status};
   if (!s) return {cls:'', text: o.tracking ? 'In transit' : 'Process mein'};
   return {cls:'run', text:o.status};
@@ -302,6 +383,8 @@ function buildMsg(o){
     body = 'Aapka order #' + o.orderNo + ' deliver ho chuka hai. Hamare saath shopping karne ka shukriya! Agar product pasand aaye to apna feedback zaroor dein.';
   } else if (s === 'RETURNED'){
     body = 'Aapka order #' + o.orderNo + ' return ho gaya hai.' + (trk ? ' Tracking ID: ' + trk : '') + ' Agar dobara order karna chahein ya koi masla ho to humein bata dein.' + tl;
+  } else if (s.indexOf('RETURN') !== -1){
+    body = 'Aapka order #' + o.orderNo + ' return process mein hai, parcel wapis aa raha hai.' + (trk ? '\nTracking ID: ' + trk + tl : '') + '\nAgar dobara order karna ho ya koi masla ho to humein bata dein.';
   } else if (['CANCAL','CANCELLED','CANCELED'].includes(s)){
     body = 'Aapka order #' + o.orderNo + ' cancel kar diya gaya hai. Agar dobara order karna ho to humein message karein.';
   } else if (s.indexOf('OUT FOR') !== -1){
@@ -323,8 +406,9 @@ function showNote(html, err, withBack){
 }
 function showLogin(msg){
   $('loginErr').textContent = msg || '';
+  $('userInput').value = getUser();
   $('login').classList.add('show');
-  setTimeout(() => $('keyInput').focus(), 50);
+  setTimeout(() => (getUser() ? $('keyInput') : $('userInput')).focus(), 50);
 }
 function copyText(t, btn){
   const done = () => { if(btn){ const old = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => btn.textContent = old, 1200); } };
@@ -339,31 +423,72 @@ function copyText(t, btn){
 function isHl(o){ return hlSet.has(digits(o.orderNo)); }
 function sumCod(arr){ return arr.reduce((t, o) => t + (parseInt(digits(o.cod), 10) || 0), 0); }
 
-/* ---------- highlight ---------- */
+/* ---------- highlight (har user ke apne, note ke sath) ---------- */
+function meName(){ return String(me.name || getUser()).toLowerCase(); }
+function isMine(o){ return !o.by || String(o.by).toLowerCase() === meName(); }
+function askNote(title, initial){
+  return new Promise(resolve => {
+    const m = $('modal'), t = $('mNote');
+    $('mTitle').textContent = title; t.value = initial || ''; m.classList.add('show');
+    setTimeout(() => t.focus(), 60);
+    const done = v => { m.classList.remove('show'); $('mSave').onclick = null; $('mCancel').onclick = null; resolve(v); };
+    $('mSave').onclick = () => done(t.value.trim());
+    $('mCancel').onclick = () => done(null);
+  });
+}
 async function toggleHl(o){
   const no = digits(o.orderNo);
-  const on = !hlSet.has(no);
-  applyHl(o, on);
+  if (hlSet.has(no)){ await saveHl(o, false, ''); return; }
+  const note = await askNote('Highlight note (optional)', '');
+  if (note === null) return;
+  await saveHl(o, true, note);
+}
+async function editNote(o){
+  const note = await askNote('Highlight note', myNotes[digits(o.orderNo)] || '');
+  if (note === null) return;
+  await saveHl(o, true, note);
+}
+async function saveHl(o, on, note){
+  const no = digits(o.orderNo), had = hlSet.has(no), prev = myNotes[no] || '';
+  applyHl(o, on, note);
   try{
-    const d = await api({action:'hl', order:no, on:on ? 1 : 0});
+    const d = await api({action:'hl', order:no, on:on ? 1 : 0, note:note});
     if (!d.ok) throw new Error(d.error || 'fail');
     setHl(d.hlSet);
-    toast(on ? 'Highlight ho gaya' : 'Highlight hat gaya');
+    toast(on ? 'Highlight save ho gaya' : 'Highlight hat gaya');
   }catch(e){
-    applyHl(o, !on);
+    applyHl(o, had, prev);
     toast('Save nahi hua. Internet check karein.');
   }
 }
-function applyHl(o, on){
+async function removeOther(o){
+  if (!confirm(o.by + ' ka highlight hata dein?')) return;
+  const no = digits(o.orderNo), by = String(o.by).toLowerCase();
+  if (lists) lists.hl = lists.hl.filter(x => !(digits(x.orderNo) === no && String(x.by || '').toLowerCase() === by));
+  renderList();
+  try{ const d = await api({action:'hl', order:no, on:0, by:o.by}); if (!d.ok) throw new Error('fail'); toast('Highlight hat gaya'); }
+  catch(e){ toast('Hat nahi saka'); loadLists(true); }
+}
+function applyHl(o, on, note){
   const no = digits(o.orderNo);
-  if (on) hlSet.add(no); else hlSet.delete(no);
+  if (on){ hlSet.add(no); myNotes[no] = note || ''; } else { hlSet.delete(no); delete myNotes[no]; }
   if (lists){
-    lists.hl = lists.hl.filter(x => digits(x.orderNo) !== no);
-    if (on) lists.hl.unshift(o);
+    lists.hl = lists.hl.filter(x => !(digits(x.orderNo) === no && isMine(x)));
+    if (on) lists.hl.unshift(Object.assign({}, o, {by: me.name || getUser(), note: note || ''}));
   }
   refreshView();
 }
 function refreshView(){ if (view === 'detail') render(); else renderList(); }
+function rebuildMine(){
+  hlSet = new Set(); myNotes = {};
+  ((lists && lists.hl) || []).forEach(x => { if (isMine(x)){ const n = digits(x.orderNo); hlSet.add(n); myNotes[n] = x.note || ''; } });
+}
+function noteBox(o){
+  const no = digits(o.orderNo); let h = '';
+  if (isHl(o)) h += '<div class="hlnote"><div class="lbl">Meri highlight note</div><p>' + (myNotes[no] ? esc(myNotes[no]) : '<i>Koi note nahi</i>') + '</p><button type="button" class="copy" id="editNote">Note likhein / badlein</button></div>';
+  if (o.by && !isMine(o)) h += '<div class="hlnote"><div class="lbl">' + esc(o.by) + ' ka note</div><p>' + (o.note ? esc(o.note) : '<i>Koi note nahi</i>') + '</p></div>';
+  return h;
+}
 
 /* ---------- lists view ---------- */
 async function loadLists(force){
@@ -375,7 +500,7 @@ async function loadLists(force){
     if (!d.ok){ if (!lists) showNote(esc(d.error || 'Kuch masla aa gaya'), true); else toast(d.error || 'Refresh nahi hua'); return; }
     lists = {out:d.out, last:d.last, lastDate:d.lastDate, hl:d.hl}; listsAt = Date.now();
     try{ localStorage.setItem('rw_lists', JSON.stringify(lists)); }catch(e){}
-    setHl(d.hlSet);
+    setHl(d.hlSet); setNotes(d);
     if (view === 'list') renderList();
   }catch(e){
     if (!lists) showNote('Internet ya link ka masla hai.<br><br><button type="button" class="copy" id="retry">Dobara try karein</button>', true);
@@ -390,14 +515,16 @@ function showList(){
   setTimeout(() => window.scrollTo({top: listScroll}), 0);
 }
 function liHTML(o){
-  const st = statusInfo(o);
-  const hl = isHl(o);
+  const st = statusInfo(o), no = digits(o.orderNo), inHl = tab === 'hl';
+  const on = inHl ? true : isHl(o), mine = isMine(o);
+  const note = inHl ? (o.note || '') : (myNotes[no] || '');
   const nm = (!o.name || String(o.name).trim().toUpperCase() === 'NO NAME') ? 'No name' : o.name;
-  return '<div class="li' + (hl ? ' hl' : '') + '" data-no="' + esc(digits(o.orderNo)) + '">'
+  const nl = (note || (inHl && !mine)) ? '<div class="li-note">' + (inHl && !mine ? '<i>' + esc(o.by) + (note ? ': ' : '') + '</i>' : '') + esc(note) + '</div>' : '';
+  return '<div class="li' + (on ? ' hl' : '') + '" data-no="' + esc(no) + '" data-by="' + esc(String(o.by || '').toLowerCase()) + '">'
     + '<div class="li-main"><div class="li-top"><b>#' + esc(o.orderNo) + '</b><span class="nm">' + esc(nm) + '</span></div>'
-    + '<div class="li-sub">' + esc(o.city || '-') + ' &middot; Rs ' + esc(o.cod || '0') + ' &middot; ' + esc(o.date || '') + '</div></div>'
+    + '<div class="li-sub">' + esc(o.city || '-') + ' &middot; Rs ' + esc(o.cod || '0') + ' &middot; ' + esc(o.date || '') + '</div>' + nl + '</div>'
     + '<span class="pill ' + st.cls + '">' + esc(st.text) + '</span>'
-    + '<button type="button" class="star' + (hl ? ' on' : '') + '" aria-label="Highlight">' + STAR + '</button>'
+    + '<button type="button" class="star' + (on ? ' on' : '') + '" aria-label="Highlight">' + STAR + '</button>'
     + '</div>';
 }
 function currentArr(){ return !lists ? [] : (tab === 'out' ? lists.out : tab === 'last' ? lists.last : lists.hl); }
@@ -415,16 +542,16 @@ async function downloadPdf(which){
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
     }
-    const doc = new window.jspdf.jsPDF({orientation:'portrait', unit:'pt', format:'a4'});
+    const doc = new window.jspdf.jsPDF({orientation: hl ? 'landscape' : 'portrait', unit:'pt', format:'a4'});
     const pad = n => String(n).padStart(2, '0'), now = new Date();
     const day = pad(now.getDate()) + '-' + pad(now.getMonth() + 1) + '-' + now.getFullYear();
     const title = hl ? 'Highlighted Orders' : 'Out for Delivery';
     doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.text('Royal Welcome - ' + title, 40, 42);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
     doc.text(day + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + '   |   ' + arr.length + ' orders   |   Total COD: Rs ' + sumCod(arr).toLocaleString('en-US'), 40, 58);
-    const head = ['#', 'Order No', 'Name', 'City', 'Amount', 'Tracking ID', 'Booking Date'].concat(hl ? ['Status'] : []);
+    const head = ['#', 'Order No', 'Name', 'City', 'Amount', 'Tracking ID', 'Booking Date'].concat(hl ? ['Status', 'Note'].concat(me.admin ? ['By'] : []) : []);
     const body = arr.map((o, i) => [i + 1, o.orderNo, o.name || '', o.city || '', 'Rs ' + (o.cod || 0), o.tracking || '-', o.date || '']
-      .concat(hl ? [statusInfo(o).text] : []));
+      .concat(hl ? [statusInfo(o).text, o.note || ''].concat(me.admin ? [o.by || ''] : []) : []));
     doc.autoTable({
       head: [head], body: body, startY: 70, theme: 'grid',
       styles: {fontSize: hl ? 8 : 9, cellPadding: 4},
@@ -449,7 +576,7 @@ function renderList(){
   let sum;
   if (tab === 'out')       sum = arr.length + ' parcel &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
   else if (tab === 'last') sum = esc(lists.lastDate || '-') + ' &middot; ' + arr.length + ' orders &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
-  else                     sum = arr.length + ' highlighted. Star dabane se list se hat jayega.';
+  else sum = arr.length + (me.admin ? ' highlights (sab team ki)' : ' highlights meri');
   h += '<div class="sum"><span>' + sum + '</span><span>' + (tab !== 'last' && arr.length ? '<button type="button" class="refresh" id="dl">PDF</button> ' : '') + '<button type="button" class="refresh" id="refresh">Refresh</button></span></div>';
 
   if (!arr.length){
@@ -466,9 +593,9 @@ function renderList(){
   $('refresh').addEventListener('click', () => { toast('Refresh ho raha hai...'); loadLists(true); });
   if ($('dl')) $('dl').addEventListener('click', () => downloadPdf(tab));
   document.querySelectorAll('.li').forEach(el => el.addEventListener('click', e => {
-    const o = currentArr().find(x => digits(x.orderNo) === el.dataset.no);
+    const o = currentArr().find(x => digits(x.orderNo) === el.dataset.no && String(x.by || '').toLowerCase() === el.dataset.by);
     if (!o) return;
-    if (e.target.closest('.star')){ toggleHl(o); return; }
+    if (e.target.closest('.star')){ if (tab === 'hl' && !isMine(o)) removeOther(o); else toggleHl(o); return; }
     listScroll = window.scrollY;
     orders = [o]; sel = 0; view = 'detail'; render(); window.scrollTo({top:0});
   }));
@@ -510,6 +637,7 @@ function render(){
         : row('Tracking ID', 'Abhi nahi mili'))
     + row('Last synced', esc(o.synced || '-'))
     + '</dl>'
+    + noteBox(o)
     + '<div class="msg"><h3>WhatsApp message</h3><pre>' + esc(msg) + '</pre>'
     + '<button type="button" class="copy" id="cpMsg">Copy message</button></div>'
     + '</section>';
@@ -521,6 +649,7 @@ function render(){
   const ct = $('cpTrk'); if (ct) ct.addEventListener('click', () => copyText(o.tracking, ct));
   $('cpMsg').addEventListener('click', e => copyText(msg, e.currentTarget));
   $('hlBtn').addEventListener('click', () => toggleHl(o));
+  const en = $('editNote'); if (en) en.addEventListener('click', () => editNote(o));
 
   $('waBtn').href   = ph.length === 10 ? 'https://wa.me/92' + ph + '?text=' + encodeURIComponent(msg) : '#';
   $('callBtn').href = ph.length === 10 ? 'tel:+92' + ph : '#';
@@ -541,7 +670,7 @@ async function search(raw){
   try{
     const d = await api({q: q});
     if (!d.ok){ showNote(esc(d.error || 'Kuch masla aa gaya'), true, true); return; }
-    setHl(d.hlSet);
+    setHl(d.hlSet); setNotes(d);
     if (!d.orders.length){
       showNote('<b>' + esc(q) + '</b> ka koi order nahi mila.<br>Number, order no ya tracking ID dobara check karein.', false, true);
       return;
@@ -557,11 +686,12 @@ $('searchForm').addEventListener('submit', e => { e.preventDefault(); search($('
 $('q').addEventListener('input', () => { if (!$('q').value && view === 'detail') showList(); });
 $('loginForm').addEventListener('submit', e => {
   e.preventDefault();
-  const k = $('keyInput').value.trim(); if (!k) return;
-  setKey(k); $('keyInput').value = ''; $('login').classList.remove('show');
+  const u = $('userInput').value.trim(), k = $('keyInput').value.trim(); if (!u || !k) return;
+  if (u.toLowerCase() !== getUser().toLowerCase()){ lists = null; hlSet = new Set(); myNotes = {}; try{ localStorage.removeItem('rw_lists'); }catch(x){} }
+  setUser(u); setKey(k); $('keyInput').value = ''; $('login').classList.remove('show');
   if ($('q').value) search($('q').value); else loadLists(true);
 });
-$('logout').addEventListener('click', () => { clearKey(); try{ localStorage.removeItem('rw_lists'); }catch(e){} lists = null; orders = []; $('main').innerHTML = ''; $('bar').classList.remove('show'); showLogin(); });
+$('logout').addEventListener('click', () => { clearKey(); try{ localStorage.removeItem('rw_lists'); }catch(e){} lists = null; hlSet = new Set(); myNotes = {}; orders = []; $('main').innerHTML = ''; $('bar').classList.remove('show'); showLogin(); });
 
 /* ---------- install as app ---------- */
 let installEvt = null;
@@ -583,8 +713,10 @@ if ('serviceWorker' in navigator){
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && view === 'list' && lists && Date.now() - listsAt > 120000) loadLists(true);
 });
-try{ const c = JSON.parse(localStorage.getItem('rw_lists') || 'null'); if (c && c.out && c.last && c.hl){ lists = c; setHl(c.hl.map(o => digits(o.orderNo))); } }catch(e){}
-if (!getKey()) showLogin(); else { if (lists) renderList(); loadLists(true); }
+try{ me = {name: getUser(), admin: localStorage.getItem('rw_admin') === '1'}; }catch(e){}
+setWho();
+try{ const c = JSON.parse(localStorage.getItem('rw_lists') || 'null'); if (c && c.out && c.last && c.hl && getUser()){ lists = c; rebuildMine(); } }catch(e){}
+if (!getKey() || !getUser()) showLogin(); else { if (lists) renderList(); loadLists(true); }
 </script>
 </body>
 </html>
