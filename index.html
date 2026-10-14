@@ -250,13 +250,33 @@ main{padding:16px 14px 0}
 .mbtns button{flex:1;height:46px;border-radius:12px;border:0;font-weight:700;font-size:15px}
 #mCancel{background:#EEF1F6;color:var(--ink)}
 #mSave{background:var(--navy);color:#fff}
+.stbox{margin:8px 14px 4px;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#F7F9FC}
+.stbox .lbl{font-weight:700;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.stbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stb{height:42px;border-radius:10px;border:1.5px solid #D3DAE6;background:#fff;color:var(--ink);font-weight:700;font-size:13px}
+.stb.wait.on{background:var(--wait-bg);border-color:var(--wait);color:var(--wait)}
+.dh{display:flex;justify-content:space-between;align-items:baseline;margin:16px 2px 8px;font-size:12.5px;color:var(--muted)}
+.dh:first-child{margin-top:2px}
+.dh b{color:var(--ink);font-size:14px}
+.stb.run.on{background:var(--run-bg);border-color:var(--run);color:var(--run)}
+.stb.ok.on{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.stb.bad.on{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.stb:disabled{opacity:.45}
+.bulk{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -4px 16px rgba(15,31,61,.12);padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));display:none;z-index:6}
+.bulk.show{display:block}
+.bulk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-weight:700}
+.bulk-top button{background:none;border:0;color:var(--run);font-weight:700;font-size:13px;padding:2px 6px}
+.chk{width:22px;height:22px;border-radius:7px;border:2px solid #C3CAD8;flex:0 0 auto;margin:0 8px 0 4px}
+.li.picked{box-shadow:inset 4px 0 0 var(--navy),var(--shadow)}
+.li.picked .chk{background:var(--navy);border-color:var(--navy);box-shadow:inset 0 0 0 3px #fff}
+.li.dim{opacity:.45}
 </style>
 </head>
 <body>
 
 <div class="login" id="login">
   <form id="loginForm">
-    <img class="lg" src="icon-192.png" alt="">
+    <img class="lg" src="icon-192.png" alt="" onerror="this.style.display='none'">
     <h2>Royal Welcome</h2>
     <p>Apna username aur password likhein</p>
     <input id="userInput" type="text" autocomplete="username" autocapitalize="none" placeholder="Username" required>
@@ -268,7 +288,7 @@ main{padding:16px 14px 0}
 
 <header class="top">
   <div class="brand">
-    <div class="bl"><img src="icon-192.png" alt=""><div><h1>Order Inspector</h1><small id="who">Royal Welcome</small></div></div>
+    <div class="bl"><img src="icon-192.png" alt="" onerror="this.style.display='none'"><div><h1>Order Inspector</h1><small id="who">Royal Welcome</small></div></div>
     <div class="br">
       <button id="install" type="button" hidden>Install</button>
       <button id="logout" type="button">Logout</button>
@@ -293,6 +313,17 @@ main{padding:16px 14px 0}
   </a>
 </nav>
 
+<div class="bulk" id="bulk">
+  <div class="bulk-top"><span id="bulkCount">0 selected</span><span><button type="button" id="bulkAll">Sab chunein</button><button type="button" id="bulkX">Band</button></span></div>
+  <div class="stbtns" id="bulkBtns">
+    <button type="button" class="stb wait" data-s="Booked">Booked</button>
+    <button type="button" class="stb run" data-s="Out for Delivery">Out for Delivery</button>
+    <button type="button" class="stb ok" data-s="Delivered">Delivered</button>
+    <button type="button" class="stb bad" data-s="Returned">Returned</button>
+    <button type="button" class="stb bad" data-s="CANCAL">Cancel</button>
+  </div>
+</div>
+
 <div class="modal" id="modal">
   <div class="msheet">
     <h3 id="mTitle">Highlight note</h3>
@@ -307,7 +338,9 @@ main{padding:16px 14px 0}
 /* ============ SETTINGS ============ */
 const API_URL = 'https://script.google.com/macros/s/AKfycbwfhG5-H93dII9oNmNaPheHj2Vnq5gqqXJ2Phw7i2vE0b-gPlva8R8MMKetc6eBV0Ym5Q/exec';
 const BRAND   = 'Royal Welcome';
-const TRACK_URL = 'https://postextracking.com.pk/';
+const TRACK_PAGE = new URL('track.html', location.href).href;   // customer tracking page (isi repo mein)
+const RIDER_NO   = '03228840467';
+const SUPPORT_WA = 'https://wa.me/923096302212';
 const SITE_URL  = 'https://royalwelcome.shop/';
 /* ================================== */
 
@@ -367,6 +400,7 @@ function statusInfo(o){
   if (s === 'RETURNED')  return {cls:'bad', text:'Returned'};
   if (['CANCAL','CANCELLED','CANCELED'].includes(s)) return {cls:'bad', text:'Cancelled'};
   if (s.indexOf('RETURN') !== -1) return {cls:'bad', text:o.status};
+  if (s === 'BOOKED') return {cls:'', text:'Booked'};
   if (s.indexOf('OUT FOR') !== -1) return {cls:'run', text:o.status};
   if (!s) return {cls:'', text: o.tracking ? 'In transit' : 'Process mein'};
   return {cls:'run', text:o.status};
@@ -377,28 +411,38 @@ function buildMsg(o){
   const nm  = (!o.name || String(o.name).trim().toUpperCase() === 'NO NAME') ? 'Customer' : o.name;
   const s   = String(o.status || '').trim().toUpperCase();
   const trk = String(o.tracking || '').trim();
-  const tl  = trk ? '\nParcel track karein: ' + TRACK_URL : '';
+  const rider = !trk && /LAHORE/i.test(o.city || '');
+  const tl  = trk ? '\nApna parcel yahan track karein (tracking number likhne ki zaroorat nahi):\n' + TRACK_PAGE + '?id=' + encodeURIComponent(trk) : '';
+  const rd  = rider ? '\nRider ka number: ' + RIDER_NO : '';
+  const no  = o.orderNo;
   let body;
   if (s === 'DELIVERED'){
-    body = 'Aapka order #' + o.orderNo + ' deliver ho chuka hai. Hamare saath shopping karne ka shukriya! Agar product pasand aaye to apna feedback zaroor dein.';
+    body = 'Aapka order #' + no + ' deliver ho chuka hai. Hamare saath shopping karne ka shukriya! Agar product pasand aaye to apna feedback zaroor dein.';
   } else if (s === 'RETURNED'){
-    body = 'Aapka order #' + o.orderNo + ' return ho gaya hai.' + (trk ? ' Tracking ID: ' + trk : '') + ' Agar dobara order karna chahein ya koi masla ho to humein bata dein.' + tl;
+    body = 'Aapka order #' + no + ' return ho gaya hai.' + (trk ? ' Tracking ID: ' + trk : '') + ' Agar dobara order karna chahein ya koi masla ho to humein bata dein.' + tl;
   } else if (s.indexOf('RETURN') !== -1){
-    body = 'Aapka order #' + o.orderNo + ' return process mein hai, parcel wapis aa raha hai.' + (trk ? '\nTracking ID: ' + trk + tl : '') + '\nAgar dobara order karna ho ya koi masla ho to humein bata dein.';
+    body = 'Aapka order #' + no + ' return process mein hai, parcel wapis aa raha hai.' + (trk ? '\nTracking ID: ' + trk + tl : '') + '\nAgar dobara order karna ho ya koi masla ho to humein bata dein.';
   } else if (['CANCAL','CANCELLED','CANCELED'].includes(s)){
-    body = 'Aapka order #' + o.orderNo + ' cancel kar diya gaya hai. Agar dobara order karna ho to humein message karein.';
+    body = 'Aapka order #' + no + ' cancel kar diya gaya hai. Agar dobara order karna ho to humein message karein.';
   } else if (s.indexOf('OUT FOR') !== -1){
-    body = 'Aapka order #' + o.orderNo + ' aaj delivery ke liye nikal chuka hai.\nTracking ID: ' + trk + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, courier aap se rabta karega.';
+    body = trk
+      ? 'Aapka order #' + no + ' aaj delivery ke liye nikal chuka hai.\nTracking ID: ' + trk + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, courier aap se rabta karega.'
+      : rider
+        ? 'Aapka order #' + no + ' aaj hamara rider deliver karne nikal chuka hai.\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, rider aap se rabta karega.' + rd
+        : 'Aapka order #' + no + ' aaj delivery ke liye nikal chuka hai.\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, courier aap se rabta karega.';
   } else if (trk){
-    body = 'Aapka order #' + o.orderNo + ' rawana ho chuka hai.\nStatus: ' + o.status + '\nTracking ID: ' + trk + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke parcel receive karte waqt payment tayyar rakhein.';
+    body = 'Aapka order #' + no + ' rawana ho chuka hai.\nStatus: ' + o.status + '\nTracking ID: ' + trk + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke parcel receive karte waqt payment tayyar rakhein.';
+  } else if (rider){
+    body = 'Aapka order #' + no + ' process mein hai.\nCOD: Rs ' + o.cod + '\nAapko 48 ghanton ke andar parcel mil jayega.' + rd;
   } else {
-    body = 'Aapka order #' + o.orderNo + ' process mein hai.\nCOD: Rs ' + o.cod + '\nTracking ID jaldi bhej di jayegi.';
+    body = 'Aapka order #' + no + ' process mein hai.\nCOD: Rs ' + o.cod + '\nTracking ID jaldi bhej di jayegi.';
   }
-  return 'Assalam o Alaikum ' + nm + ',\n' + body + '\n\n- ' + BRAND + '\nHamari website: ' + SITE_URL;
+  return 'Assalam o Alaikum ' + nm + ',\n' + body + '\n\nParcel ki detail ke liye WhatsApp karein:\n' + SUPPORT_WA + '\n\n- ' + BRAND + '\nHamari website: ' + SITE_URL;
 }
 
 /* ---------- small UI helpers ---------- */
 function showNote(html, err, withBack){
+  selMode = false; $('bulk').classList.remove('show');
   $('main').innerHTML = '<div class="note' + (err ? ' err' : '') + '">' + html + '</div>'
     + (withBack ? '<p style="text-align:center"><button type="button" class="back" id="noteBack">&larr; Lists par wapis</button></p>' : '');
   $('bar').classList.remove('show');
@@ -490,6 +534,48 @@ function noteBox(o){
   return h;
 }
 
+/* ---------- rider parcels: manual status ---------- */
+const STATUS_EDIT = false;   // app mein status buttons band (status ab sheet ke Rider Status tab se)
+let selMode = false; const picked = new Set();
+const ST_BTNS = [['Booked','wait'],['Out for Delivery','run'],['Delivered','ok'],['Returned','bad'],['CANCAL','bad']];
+function stLabel(x){ return x === 'CANCAL' ? 'Cancel' : x; }
+function isCur(o, x){
+  const c = String(o.status || '').trim().toUpperCase();
+  if (x === 'CANCAL') return ['CANCAL','CANCELLED','CANCELED'].includes(c);
+  return c === x.toUpperCase();
+}
+function statusBox(o){
+  if (!me.admin || o.tracking) return '';
+  return '<div class="stbox"><div class="lbl">Rider parcel &middot; status badlein</div><div class="stbtns">'
+    + ST_BTNS.map(b => '<button type="button" class="stb ' + b[1] + (isCur(o, b[0]) ? ' on' : '') + '" data-s="' + b[0] + '">' + stLabel(b[0]) + '</button>').join('')
+    + '</div></div>';
+}
+function patchStatus(map){
+  [lists && lists.out, lists && lists.last, lists && lists.lhr, lists && lists.hl, orders].forEach(L => (L || []).forEach(x => { const k = digits(x.orderNo); if (k in map) x.status = map[k]; }));
+}
+async function setStatus(list, status){
+  const map = {}, prev = {};
+  list.forEach(o => { const k = digits(o.orderNo); map[k] = status; prev[k] = o.status; });
+  patchStatus(map); refreshView();
+  try{
+    const d = await api({action:'status', orders:Object.keys(map).join(','), status:status});
+    if (!d.ok) throw new Error(d.error || 'fail');
+    toast(d.done.length + ' order: ' + stLabel(status) + (d.skipped.length ? ' (' + d.skipped.length + ' skip)' : ''));
+    loadLists(true);
+  }catch(e){ patchStatus(prev); refreshView(); toast('Status save nahi hua. Internet check karein.'); }
+}
+function updBulk(){
+  $('bulkCount').textContent = picked.size + ' selected';
+  document.querySelectorAll('#bulkBtns .stb').forEach(b => { b.disabled = !picked.size; });
+}
+$('bulkAll').addEventListener('click', () => { currentArr().forEach(o => { if (!o.tracking) picked.add(digits(o.orderNo)); }); renderList(); });
+$('bulkX').addEventListener('click', () => { selMode = false; picked.clear(); renderList(); });
+$('bulkBtns').addEventListener('click', e => {
+  const b = e.target.closest('.stb'); if (!b || !picked.size) return;
+  const list = currentArr().filter(o => picked.has(digits(o.orderNo)));
+  selMode = false; picked.clear(); setStatus(list, b.dataset.s);
+});
+
 /* ---------- lists view ---------- */
 async function loadLists(force){
   if (!force && lists && Date.now() - listsAt < 120000){ renderList(); return; }
@@ -498,7 +584,7 @@ async function loadLists(force){
   try{
     const d = await api({action:'lists', fresh: force ? 1 : 0});
     if (!d.ok){ if (!lists) showNote(esc(d.error || 'Kuch masla aa gaya'), true); else toast(d.error || 'Refresh nahi hua'); return; }
-    lists = {out:d.out, last:d.last, lastDate:d.lastDate, hl:d.hl}; listsAt = Date.now();
+    lists = {out:d.out, last:d.last, lastDate:d.lastDate, lhr:d.lhr || [], hl:d.hl}; listsAt = Date.now();
     try{ localStorage.setItem('rw_lists', JSON.stringify(lists)); }catch(e){}
     setHl(d.hlSet); setNotes(d);
     if (view === 'list') renderList();
@@ -516,18 +602,20 @@ function showList(){
 }
 function liHTML(o){
   const st = statusInfo(o), no = digits(o.orderNo), inHl = tab === 'hl';
-  const on = inHl ? true : isHl(o), mine = isMine(o);
+  const on = inHl ? true : isHl(o), mine = isMine(o), rider = !o.tracking;
   const note = inHl ? (o.note || '') : (myNotes[no] || '');
   const nm = (!o.name || String(o.name).trim().toUpperCase() === 'NO NAME') ? 'No name' : o.name;
   const nl = (note || (inHl && !mine)) ? '<div class="li-note">' + (inHl && !mine ? '<i>' + esc(o.by) + (note ? ': ' : '') + '</i>' : '') + esc(note) + '</div>' : '';
-  return '<div class="li' + (on ? ' hl' : '') + '" data-no="' + esc(no) + '" data-by="' + esc(String(o.by || '').toLowerCase()) + '">'
+  const tag = (rider && /OUT\s*FOR/i.test(o.status || '') && !/RETURN/i.test(o.status || '')) ? ' &middot; Rider' : '';
+  const cls = (on && !selMode ? ' hl' : '') + (selMode ? (rider ? ' pk' : ' dim') : '') + (selMode && picked.has(no) ? ' picked' : '');
+  const end = selMode ? (rider ? '<span class="chk"></span>' : '')
+                      : '<button type="button" class="star' + (on ? ' on' : '') + '" aria-label="Highlight">' + STAR + '</button>';
+  return '<div class="li' + cls + '" data-no="' + esc(no) + '" data-by="' + esc(String(o.by || '').toLowerCase()) + '">'
     + '<div class="li-main"><div class="li-top"><b>#' + esc(o.orderNo) + '</b><span class="nm">' + esc(nm) + '</span></div>'
-    + '<div class="li-sub">' + esc(o.city || '-') + ' &middot; Rs ' + esc(o.cod || '0') + ' &middot; ' + esc(o.date || '') + '</div>' + nl + '</div>'
-    + '<span class="pill ' + st.cls + '">' + esc(st.text) + '</span>'
-    + '<button type="button" class="star' + (on ? ' on' : '') + '" aria-label="Highlight">' + STAR + '</button>'
-    + '</div>';
+    + '<div class="li-sub">' + esc(o.city || '-') + ' &middot; Rs ' + esc(o.cod || '0') + ' &middot; ' + esc(o.date || '') + tag + '</div>' + nl + '</div>'
+    + '<span class="pill ' + st.cls + '">' + esc(st.text) + '</span>' + end + '</div>';
 }
-function currentArr(){ return !lists ? [] : (tab === 'out' ? lists.out : tab === 'last' ? lists.last : lists.hl); }
+function currentArr(){ return !lists ? [] : (tab === 'out' ? lists.out : tab === 'last' ? lists.last : tab === 'lhr' ? (lists.lhr || []) : lists.hl); }
 /* ---------- PDF download (Out for Delivery / Highlighted) ---------- */
 function loadScript(src){
   return new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => no(new Error('load')); document.head.appendChild(el); });
@@ -567,38 +655,50 @@ function renderList(){
   view = 'list'; $('bar').classList.remove('show');
   if (!lists){ showNote('<div class="spin"></div>Lists load ho rahi hain...'); return; }
   const arr = currentArr();
+  const canSel = me.admin && tab !== 'hl' && arr.some(o => !o.tracking);
   let h = '<div class="tabs">'
     + tabBtn('out', lists.out.length, 'Out for Delivery')
     + tabBtn('last', lists.last.length, 'Aakhri Date')
+    + tabBtn('lhr', (lists.lhr || []).length, 'Lahore')
     + tabBtn('hl', lists.hl.length, 'Highlighted')
     + '</div>';
 
   let sum;
   if (tab === 'out')       sum = arr.length + ' parcel &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
   else if (tab === 'last') sum = esc(lists.lastDate || '-') + ' &middot; ' + arr.length + ' orders &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
+  else if (tab === 'lhr')  sum = arr.length + ' parcel (bina tracking) &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
   else sum = arr.length + (me.admin ? ' highlights (sab team ki)' : ' highlights meri');
-  h += '<div class="sum"><span>' + sum + '</span><span>' + (tab !== 'last' && arr.length ? '<button type="button" class="refresh" id="dl">PDF</button> ' : '') + '<button type="button" class="refresh" id="refresh">Refresh</button></span></div>';
+  h += '<div class="sum"><span>' + sum + '</span><span>' + ((tab === 'out' || tab === 'hl') && arr.length ? '<button type="button" class="refresh" id="dl">PDF</button> ' : '') + (canSel ? '<button type="button" class="refresh" id="selBtn">' + (selMode ? 'Done' : 'Select') + '</button> ' : '') + '<button type="button" class="refresh" id="refresh">Refresh</button></span></div>';
 
   if (!arr.length){
     const msg = tab === 'out' ? 'Abhi koi order Out for Delivery nahi hai.'
               : tab === 'last' ? 'Aakhri date ki koi entry nahi mili.'
+              : tab === 'lhr' ? 'Lahore ka koi bina-tracking parcel nahi mila.'
               : 'Koi order highlight nahi hai. Kisi order ke star par tap karein.';
     h += '<div class="note">' + msg + '</div>';
   } else {
-    h += arr.map(liHTML).join('');
+    h += tab === 'lhr' ? groupHTML(arr) : arr.map(liHTML).join('');
   }
   $('main').innerHTML = h;
 
-  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; renderList(); }));
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; selMode = false; picked.clear(); renderList(); }));
   $('refresh').addEventListener('click', () => { toast('Refresh ho raha hai...'); loadLists(true); });
   if ($('dl')) $('dl').addEventListener('click', () => downloadPdf(tab));
+  if ($('selBtn')) $('selBtn').addEventListener('click', () => { selMode = !selMode; picked.clear(); renderList(); });
+  $('bulk').classList.toggle('show', selMode); updBulk();
   document.querySelectorAll('.li').forEach(el => el.addEventListener('click', e => {
     const o = currentArr().find(x => digits(x.orderNo) === el.dataset.no && String(x.by || '').toLowerCase() === el.dataset.by);
     if (!o) return;
+    if (selMode){ if (o.tracking) return; const n = digits(o.orderNo); if (picked.has(n)) picked.delete(n); else picked.add(n); el.classList.toggle('picked'); updBulk(); return; }
     if (e.target.closest('.star')){ if (tab === 'hl' && !isMine(o)) removeOther(o); else toggleHl(o); return; }
     listScroll = window.scrollY;
     orders = [o]; sel = 0; view = 'detail'; render(); window.scrollTo({top:0});
   }));
+}
+function groupHTML(arr){
+  const g = {}, keys = [];
+  arr.forEach(o => { const k = o.date || '-'; if (!g[k]){ g[k] = []; keys.push(k); } g[k].push(o); });
+  return keys.map(k => '<div class="dh"><b>' + esc(k) + '</b><span>' + g[k].length + ' parcel &middot; COD Rs ' + sumCod(g[k]).toLocaleString('en-US') + '</span></div>' + g[k].map(liHTML).join('')).join('');
 }
 function tabBtn(t, n, label){
   return '<button type="button" class="tab' + (tab === t ? ' on' : '') + '" data-t="' + t + '"><b>' + n + '</b><span>' + label + '</span></button>';
@@ -606,7 +706,7 @@ function tabBtn(t, n, label){
 
 /* ---------- detail view ---------- */
 function render(){
-  view = 'detail';
+  view = 'detail'; selMode = false; picked.clear(); $('bulk').classList.remove('show');
   const o = orders[sel];
   const st = statusInfo(o);
   const msg = buildMsg(o);
@@ -637,6 +737,7 @@ function render(){
         : row('Tracking ID', 'Abhi nahi mili'))
     + row('Last synced', esc(o.synced || '-'))
     + '</dl>'
+    + statusBox(o)
     + noteBox(o)
     + '<div class="msg"><h3>WhatsApp message</h3><pre>' + esc(msg) + '</pre>'
     + '<button type="button" class="copy" id="cpMsg">Copy message</button></div>'
@@ -650,6 +751,7 @@ function render(){
   $('cpMsg').addEventListener('click', e => copyText(msg, e.currentTarget));
   $('hlBtn').addEventListener('click', () => toggleHl(o));
   const en = $('editNote'); if (en) en.addEventListener('click', () => editNote(o));
+  document.querySelectorAll('#main .stb').forEach(b => b.addEventListener('click', () => setStatus([o], b.dataset.s)));
 
   $('waBtn').href   = ph.length === 10 ? 'https://wa.me/92' + ph + '?text=' + encodeURIComponent(msg) : '#';
   $('callBtn').href = ph.length === 10 ? 'tel:+92' + ph : '#';
