@@ -270,6 +270,37 @@ main{padding:16px 14px 0}
 .li.picked{box-shadow:inset 4px 0 0 var(--navy),var(--shadow)}
 .li.picked .chk{background:var(--navy);border-color:var(--navy);box-shadow:inset 0 0 0 3px #fff}
 .li.dim{opacity:.45}
+/* ===== professional refinement ===== */
+:root{--bg:#F4F6FA;--line:#E3E8F0;--shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06)}
+body{font-size:14px;-webkit-font-smoothing:antialiased}
+.top{border-radius:0;padding-bottom:16px}
+.brand h1{font-size:15px}
+.search input{border:0;height:44px;border-radius:10px;font-size:15px;font-weight:500}
+.search button{height:44px;border-radius:10px;font-size:14px}
+main{padding:14px 14px 0}
+.tabs{border-radius:10px;padding:3px;gap:2px}
+.tab{border-radius:8px;padding:6px 1px}
+.tab b{font-size:16px}
+.tab span{font-size:10.5px;letter-spacing:.02em}
+.sum{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);font-weight:600;margin:2px 2px 10px}
+.li{border:1px solid var(--line);box-shadow:none;border-radius:12px;margin-bottom:8px}
+.li.hl{border-color:#E4D3A0;box-shadow:inset 3px 0 0 var(--gold)}
+.li.picked{box-shadow:inset 3px 0 0 var(--navy)}
+.nm{margin-left:8px;color:var(--muted);font-weight:500;font-size:13px}
+.li-sub{font-size:12.5px}
+.pill{border-radius:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 8px;white-space:nowrap}
+.card{border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px}
+.head{padding:16px 18px}
+.head .ono{font-size:24px;letter-spacing:-.01em}
+.row dt{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em}
+.row dd{font-size:14px}
+.row dd.cod{font-size:17px}
+.msg{border-radius:12px}
+a.copy{display:inline-block;text-decoration:none}
+.dh{margin:14px 2px 8px;text-transform:uppercase;letter-spacing:.05em;font-size:11.5px}
+.dh b{font-size:12.5px}
+.back{font-size:13px;color:var(--muted)}
+.note{border:1px solid var(--line);box-shadow:none}
 </style>
 </head>
 <body>
@@ -278,7 +309,7 @@ main{padding:16px 14px 0}
   <form id="loginForm">
     <img class="lg" src="icon-192.png" alt="" onerror="this.style.display='none'">
     <h2>Royal Welcome</h2>
-    <p>Apna username aur password likhein</p>
+    <p>Sign in to continue</p>
     <input id="userInput" type="text" autocomplete="username" autocapitalize="none" placeholder="Username" required>
     <input id="keyInput" type="password" autocomplete="current-password" placeholder="Password" required>
     <div class="e" id="loginErr"></div>
@@ -295,7 +326,7 @@ main{padding:16px 14px 0}
     </div>
   </div>
   <form class="search" id="searchForm">
-    <input id="q" type="search" inputmode="numeric" autocomplete="off" placeholder="Number, order no ya tracking ID">
+    <input id="q" type="search" inputmode="numeric" autocomplete="off" placeholder="Phone number, order no or tracking ID">
     <button type="submit">Search</button>
   </form>
 </header>
@@ -314,7 +345,7 @@ main{padding:16px 14px 0}
 </nav>
 
 <div class="bulk" id="bulk">
-  <div class="bulk-top"><span id="bulkCount">0 selected</span><span><button type="button" id="bulkAll">Sab chunein</button><button type="button" id="bulkX">Band</button></span></div>
+  <div class="bulk-top"><span id="bulkCount">0 selected</span><span><button type="button" id="bulkAll">Select all</button><button type="button" id="bulkX">Close</button></span></div>
   <div class="stbtns" id="bulkBtns">
     <button type="button" class="stb wait" data-s="Booked">Booked</button>
     <button type="button" class="stb run" data-s="Out for Delivery">Out for Delivery</button>
@@ -327,7 +358,7 @@ main{padding:16px 14px 0}
 <div class="modal" id="modal">
   <div class="msheet">
     <h3 id="mTitle">Highlight note</h3>
-    <textarea id="mNote" maxlength="300" placeholder="Kis wajah se highlight kiya? (optional)"></textarea>
+    <textarea id="mNote" maxlength="300" placeholder="Why are you highlighting this order? (optional)"></textarea>
     <div class="mbtns"><button type="button" id="mCancel">Cancel</button><button type="button" id="mSave">Save</button></div>
   </div>
 </div>
@@ -338,7 +369,7 @@ main{padding:16px 14px 0}
 /* ============ SETTINGS ============ */
 const API_URL = 'https://script.google.com/macros/s/AKfycbwfhG5-H93dII9oNmNaPheHj2Vnq5gqqXJ2Phw7i2vE0b-gPlva8R8MMKetc6eBV0Ym5Q/exec';
 const BRAND   = 'Royal Welcome';
-const TRACK_PAGE = new URL('track.html', location.href).href;   // customer tracking page (isi repo mein)
+const TRACK_URL = 'https://postextracking.com.pk/';
 const RIDER_NO   = '03228840467';
 const SUPPORT_WA = 'https://wa.me/923096302212';
 const SITE_URL  = 'https://royalwelcome.shop/';
@@ -402,7 +433,7 @@ function statusInfo(o){
   if (s.indexOf('RETURN') !== -1) return {cls:'bad', text:o.status};
   if (s === 'BOOKED') return {cls:'', text:'Booked'};
   if (s.indexOf('OUT FOR') !== -1) return {cls:'run', text:o.status};
-  if (!s) return {cls:'', text: o.tracking ? 'In transit' : 'Process mein'};
+  if (!s) return {cls:'', text: o.tracking ? 'In transit' : 'Processing'};
   return {cls:'run', text:o.status};
 }
 
@@ -412,26 +443,27 @@ function buildMsg(o){
   const s   = String(o.status || '').trim().toUpperCase();
   const trk = String(o.tracking || '').trim();
   const rider = !trk && /LAHORE/i.test(o.city || '');
-  const tl  = trk ? '\nApna parcel yahan track karein (tracking number likhne ki zaroorat nahi):\n' + TRACK_PAGE + '?id=' + encodeURIComponent(trk) : '';
+  const tl  = trk ? '\nParcel yahan track karein (Tracking ID copy kar ke paste karein):\n' + TRACK_URL : '';
+  const tid = '```' + trk + '```';
   const rd  = rider ? '\nRider ka number: ' + RIDER_NO : '';
   const no  = o.orderNo;
   let body;
   if (s === 'DELIVERED'){
     body = 'Aapka order #' + no + ' deliver ho chuka hai. Hamare saath shopping karne ka shukriya! Agar product pasand aaye to apna feedback zaroor dein.';
   } else if (s === 'RETURNED'){
-    body = 'Aapka order #' + no + ' return ho gaya hai.' + (trk ? ' Tracking ID: ' + trk : '') + ' Agar dobara order karna chahein ya koi masla ho to humein bata dein.' + tl;
+    body = 'Aapka order #' + no + ' return ho gaya hai.' + (trk ? ' Tracking ID: ' + tid : '') + ' Agar dobara order karna chahein ya koi masla ho to humein bata dein.' + tl;
   } else if (s.indexOf('RETURN') !== -1){
-    body = 'Aapka order #' + no + ' return process mein hai, parcel wapis aa raha hai.' + (trk ? '\nTracking ID: ' + trk + tl : '') + '\nAgar dobara order karna ho ya koi masla ho to humein bata dein.';
+    body = 'Aapka order #' + no + ' return process mein hai, parcel wapis aa raha hai.' + (trk ? '\nTracking ID: ' + tid + tl : '') + '\nAgar dobara order karna ho ya koi masla ho to humein bata dein.';
   } else if (['CANCAL','CANCELLED','CANCELED'].includes(s)){
     body = 'Aapka order #' + no + ' cancel kar diya gaya hai. Agar dobara order karna ho to humein message karein.';
   } else if (s.indexOf('OUT FOR') !== -1){
     body = trk
-      ? 'Aapka order #' + no + ' aaj delivery ke liye nikal chuka hai.\nTracking ID: ' + trk + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, courier aap se rabta karega.'
+      ? 'Aapka order #' + no + ' aaj delivery ke liye nikal chuka hai.\nTracking ID: ' + tid + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, courier aap se rabta karega.'
       : rider
         ? 'Aapka order #' + no + ' aaj hamara rider deliver karne nikal chuka hai.\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, rider aap se rabta karega.' + rd
         : 'Aapka order #' + no + ' aaj delivery ke liye nikal chuka hai.\nCOD: Rs ' + o.cod + '\nMeherbani kar ke apna phone on rakhein aur payment tayyar rakhein, courier aap se rabta karega.';
   } else if (trk){
-    body = 'Aapka order #' + no + ' rawana ho chuka hai.\nStatus: ' + o.status + '\nTracking ID: ' + trk + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke parcel receive karte waqt payment tayyar rakhein.';
+    body = 'Aapka order #' + no + ' rawana ho chuka hai.\nStatus: ' + o.status + '\nTracking ID: ' + tid + tl + '\nCOD: Rs ' + o.cod + '\nMeherbani kar ke parcel receive karte waqt payment tayyar rakhein.';
   } else if (rider){
     body = 'Aapka order #' + no + ' process mein hai.\nCOD: Rs ' + o.cod + '\nAapko 48 ghanton ke andar parcel mil jayega.' + rd;
   } else {
@@ -444,7 +476,7 @@ function buildMsg(o){
 function showNote(html, err, withBack){
   selMode = false; $('bulk').classList.remove('show');
   $('main').innerHTML = '<div class="note' + (err ? ' err' : '') + '">' + html + '</div>'
-    + (withBack ? '<p style="text-align:center"><button type="button" class="back" id="noteBack">&larr; Lists par wapis</button></p>' : '');
+    + (withBack ? '<p style="text-align:center"><button type="button" class="back" id="noteBack">&larr; Back to lists</button></p>' : '');
   $('bar').classList.remove('show');
   const nb = $('noteBack'); if (nb) nb.addEventListener('click', () => showList());
 }
@@ -499,19 +531,19 @@ async function saveHl(o, on, note){
     const d = await api({action:'hl', order:no, on:on ? 1 : 0, note:note});
     if (!d.ok) throw new Error(d.error || 'fail');
     setHl(d.hlSet);
-    toast(on ? 'Highlight save ho gaya' : 'Highlight hat gaya');
+    toast(on ? 'Highlight saved' : 'Highlight removed');
   }catch(e){
     applyHl(o, had, prev);
-    toast('Save nahi hua. Internet check karein.');
+    toast('Could not save. Check your internet.');
   }
 }
 async function removeOther(o){
-  if (!confirm(o.by + ' ka highlight hata dein?')) return;
+  if (!confirm('Remove ' + o.by + "'s highlight?")) return;
   const no = digits(o.orderNo), by = String(o.by).toLowerCase();
   if (lists) lists.hl = lists.hl.filter(x => !(digits(x.orderNo) === no && String(x.by || '').toLowerCase() === by));
   renderList();
   try{ const d = await api({action:'hl', order:no, on:0, by:o.by}); if (!d.ok) throw new Error('fail'); toast('Highlight hat gaya'); }
-  catch(e){ toast('Hat nahi saka'); loadLists(true); }
+  catch(e){ toast('Could not remove'); loadLists(true); }
 }
 function applyHl(o, on, note){
   const no = digits(o.orderNo);
@@ -529,8 +561,8 @@ function rebuildMine(){
 }
 function noteBox(o){
   const no = digits(o.orderNo); let h = '';
-  if (isHl(o)) h += '<div class="hlnote"><div class="lbl">Meri highlight note</div><p>' + (myNotes[no] ? esc(myNotes[no]) : '<i>Koi note nahi</i>') + '</p><button type="button" class="copy" id="editNote">Note likhein / badlein</button></div>';
-  if (o.by && !isMine(o)) h += '<div class="hlnote"><div class="lbl">' + esc(o.by) + ' ka note</div><p>' + (o.note ? esc(o.note) : '<i>Koi note nahi</i>') + '</p></div>';
+  if (isHl(o)) h += '<div class="hlnote"><div class="lbl">My highlight note</div><p>' + (myNotes[no] ? esc(myNotes[no]) : '<i>No note</i>') + '</p><button type="button" class="copy" id="editNote">Add / edit note</button></div>';
+  if (o.by && !isMine(o)) h += '<div class="hlnote"><div class="lbl">' + esc(o.by) + "'s note</div><p>" + (o.note ? esc(o.note) : '<i>No note</i>') + '</p></div>';
   return h;
 }
 
@@ -544,9 +576,10 @@ function isCur(o, x){
   if (x === 'CANCAL') return ['CANCAL','CANCELLED','CANCELED'].includes(c);
   return c === x.toUpperCase();
 }
+function isLahoreRider(o){ return !String(o.tracking || '').trim() && /LAHORE/i.test(o.city || ''); }
 function statusBox(o){
-  if (!me.admin || o.tracking) return '';
-  return '<div class="stbox"><div class="lbl">Rider parcel &middot; status badlein</div><div class="stbtns">'
+  if (!me.admin || !isLahoreRider(o)) return '';
+  return '<div class="stbox"><div class="lbl">Lahore parcel &middot; update status</div><div class="stbtns">'
     + ST_BTNS.map(b => '<button type="button" class="stb ' + b[1] + (isCur(o, b[0]) ? ' on' : '') + '" data-s="' + b[0] + '">' + stLabel(b[0]) + '</button>').join('')
     + '</div></div>';
 }
@@ -562,13 +595,13 @@ async function setStatus(list, status){
     if (!d.ok) throw new Error(d.error || 'fail');
     toast(d.done.length + ' order: ' + stLabel(status) + (d.skipped.length ? ' (' + d.skipped.length + ' skip)' : ''));
     loadLists(true);
-  }catch(e){ patchStatus(prev); refreshView(); toast('Status save nahi hua. Internet check karein.'); }
+  }catch(e){ patchStatus(prev); refreshView(); toast('Could not update status. Check your internet.'); }
 }
 function updBulk(){
   $('bulkCount').textContent = picked.size + ' selected';
   document.querySelectorAll('#bulkBtns .stb').forEach(b => { b.disabled = !picked.size; });
 }
-$('bulkAll').addEventListener('click', () => { currentArr().forEach(o => { if (!o.tracking) picked.add(digits(o.orderNo)); }); renderList(); });
+$('bulkAll').addEventListener('click', () => { currentArr().forEach(o => { if (isLahoreRider(o)) picked.add(digits(o.orderNo)); }); renderList(); });
 $('bulkX').addEventListener('click', () => { selMode = false; picked.clear(); renderList(); });
 $('bulkBtns').addEventListener('click', e => {
   const b = e.target.closest('.stb'); if (!b || !picked.size) return;
@@ -580,17 +613,17 @@ $('bulkBtns').addEventListener('click', e => {
 async function loadLists(force){
   if (!force && lists && Date.now() - listsAt < 120000){ renderList(); return; }
   if (!getKey()){ showLogin(); return; }
-  if (!lists) showNote('<div class="spin"></div>Lists load ho rahi hain...');
+  if (!lists) showNote('<div class="spin"></div>Loading...');
   try{
     const d = await api({action:'lists', fresh: force ? 1 : 0});
-    if (!d.ok){ if (!lists) showNote(esc(d.error || 'Kuch masla aa gaya'), true); else toast(d.error || 'Refresh nahi hua'); return; }
+    if (!d.ok){ if (!lists) showNote(esc(d.error || 'Something went wrong'), true); else toast(d.error || 'Refresh failed'); return; }
     lists = {out:d.out, last:d.last, lastDate:d.lastDate, lhr:d.lhr || [], hl:d.hl}; listsAt = Date.now();
     try{ localStorage.setItem('rw_lists', JSON.stringify(lists)); }catch(e){}
     setHl(d.hlSet); setNotes(d);
     if (view === 'list') renderList();
   }catch(e){
-    if (!lists) showNote('Internet ya link ka masla hai.<br><br><button type="button" class="copy" id="retry">Dobara try karein</button>', true);
-    else toast('Internet ka masla hai');
+    if (!lists) showNote('Connection problem.<br><br><button type="button" class="copy" id="retry">Try again</button>', true);
+    else toast('No connection');
     const rb = $('retry'); if (rb) rb.addEventListener('click', () => loadLists(true));
   }
 }
@@ -602,7 +635,7 @@ function showList(){
 }
 function liHTML(o){
   const st = statusInfo(o), no = digits(o.orderNo), inHl = tab === 'hl';
-  const on = inHl ? true : isHl(o), mine = isMine(o), rider = !o.tracking;
+  const on = inHl ? true : isHl(o), mine = isMine(o), rider = isLahoreRider(o);
   const note = inHl ? (o.note || '') : (myNotes[no] || '');
   const nm = (!o.name || String(o.name).trim().toUpperCase() === 'NO NAME') ? 'No name' : o.name;
   const nl = (note || (inHl && !mine)) ? '<div class="li-note">' + (inHl && !mine ? '<i>' + esc(o.by) + (note ? ': ' : '') + '</i>' : '') + esc(note) + '</div>' : '';
@@ -623,8 +656,8 @@ function loadScript(src){
 async function downloadPdf(which){
   const hl = which === 'hl';
   const arr = hl ? lists.hl : lists.out;
-  if (!arr.length){ toast('List khali hai'); return; }
-  toast('PDF ban rahi hai...');
+  if (!arr.length){ toast('The list is empty'); return; }
+  toast('Creating PDF...');
   try{
     if (!(window.jspdf && window.jspdf.jsPDF)){
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
@@ -637,28 +670,30 @@ async function downloadPdf(which){
     doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.text('Royal Welcome - ' + title, 40, 42);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
     doc.text(day + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + '   |   ' + arr.length + ' orders   |   Total COD: Rs ' + sumCod(arr).toLocaleString('en-US'), 40, 58);
-    const head = ['#', 'Order No', 'Name', 'City', 'Amount', 'Tracking ID', 'Booking Date'].concat(hl ? ['Status', 'Note'].concat(me.admin ? ['By'] : []) : []);
-    const body = arr.map((o, i) => [i + 1, o.orderNo, o.name || '', o.city || '', 'Rs ' + (o.cod || 0), o.tracking || '-', o.date || '']
-      .concat(hl ? [statusInfo(o).text, o.note || ''].concat(me.admin ? [o.by || ''] : []) : []));
+    const head = hl ? ['#', 'Order No', 'Name', 'City', 'Amount', 'Tracking ID', 'Booking Date', 'Status', 'Note'].concat(me.admin ? ['By'] : [])
+                    : ['#', 'Order No', 'Name', 'Number', 'City', 'Amount', 'Tracking ID', 'Booking Date'];
+    const body = arr.map((o, i) => hl
+      ? [i + 1, o.orderNo, o.name || '', o.city || '', 'Rs ' + (o.cod || 0), o.tracking || '-', o.date || '', statusInfo(o).text, o.note || ''].concat(me.admin ? [o.by || ''] : [])
+      : [i + 1, o.orderNo, o.name || '', prettyPhone(o.number), o.city || '', 'Rs ' + (o.cod || 0), o.tracking || '-', o.date || '']);
     doc.autoTable({
       head: [head], body: body, startY: 70, theme: 'grid',
-      styles: {fontSize: hl ? 8 : 9, cellPadding: 4},
+      styles: {fontSize: 8, cellPadding: 4},
       headStyles: {fillColor: [15, 31, 61], textColor: [200, 162, 74]},
       alternateRowStyles: {fillColor: [245, 247, 251]},
-      columnStyles: {0: {cellWidth: 22}, 4: {halign: 'right'}}
+      columnStyles: {0: {cellWidth: 22}, [hl ? 4 : 5]: {halign: 'right'}}
     });
     doc.save((hl ? 'Highlighted_Orders_' : 'Out_for_Delivery_') + day + '.pdf');
-  }catch(e){ toast('PDF nahi ban saki. Internet check karein.'); }
+  }catch(e){ toast('Could not create the PDF. Check your internet.'); }
 }
 
 function renderList(){
   view = 'list'; $('bar').classList.remove('show');
-  if (!lists){ showNote('<div class="spin"></div>Lists load ho rahi hain...'); return; }
+  if (!lists){ showNote('<div class="spin"></div>Loading...'); return; }
   const arr = currentArr();
-  const canSel = me.admin && tab !== 'hl' && arr.some(o => !o.tracking);
+  const canSel = me.admin && tab !== 'hl' && arr.some(isLahoreRider);
   let h = '<div class="tabs">'
     + tabBtn('out', lists.out.length, 'Out for Delivery')
-    + tabBtn('last', lists.last.length, 'Aakhri Date')
+    + tabBtn('last', lists.last.length, 'Recent Orders')
     + tabBtn('lhr', (lists.lhr || []).length, 'Lahore')
     + tabBtn('hl', lists.hl.length, 'Highlighted')
     + '</div>';
@@ -666,15 +701,15 @@ function renderList(){
   let sum;
   if (tab === 'out')       sum = arr.length + ' parcel &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
   else if (tab === 'last') sum = esc(lists.lastDate || '-') + ' &middot; ' + arr.length + ' orders &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
-  else if (tab === 'lhr')  sum = arr.length + ' parcel (bina tracking) &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
-  else sum = arr.length + (me.admin ? ' highlights (sab team ki)' : ' highlights meri');
+  else if (tab === 'lhr')  sum = arr.length + ' parcels (no tracking ID) &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
+  else sum = arr.length + (me.admin ? ' highlights (whole team)' : ' my highlights');
   h += '<div class="sum"><span>' + sum + '</span><span>' + ((tab === 'out' || tab === 'hl') && arr.length ? '<button type="button" class="refresh" id="dl">PDF</button> ' : '') + (canSel ? '<button type="button" class="refresh" id="selBtn">' + (selMode ? 'Done' : 'Select') + '</button> ' : '') + '<button type="button" class="refresh" id="refresh">Refresh</button></span></div>';
 
   if (!arr.length){
-    const msg = tab === 'out' ? 'Abhi koi order Out for Delivery nahi hai.'
-              : tab === 'last' ? 'Aakhri date ki koi entry nahi mili.'
-              : tab === 'lhr' ? 'Lahore ka koi bina-tracking parcel nahi mila.'
-              : 'Koi order highlight nahi hai. Kisi order ke star par tap karein.';
+    const msg = tab === 'out' ? 'No orders are out for delivery right now.'
+              : tab === 'last' ? 'No entries found for the latest date.'
+              : tab === 'lhr' ? 'No Lahore parcels without a tracking ID.'
+              : 'No highlights yet. Tap the star on an order.';
     h += '<div class="note">' + msg + '</div>';
   } else {
     h += tab === 'lhr' ? groupHTML(arr) : arr.map(liHTML).join('');
@@ -682,14 +717,14 @@ function renderList(){
   $('main').innerHTML = h;
 
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; selMode = false; picked.clear(); renderList(); }));
-  $('refresh').addEventListener('click', () => { toast('Refresh ho raha hai...'); loadLists(true); });
+  $('refresh').addEventListener('click', () => { toast('Refreshing...'); loadLists(true); });
   if ($('dl')) $('dl').addEventListener('click', () => downloadPdf(tab));
   if ($('selBtn')) $('selBtn').addEventListener('click', () => { selMode = !selMode; picked.clear(); renderList(); });
   $('bulk').classList.toggle('show', selMode); updBulk();
   document.querySelectorAll('.li').forEach(el => el.addEventListener('click', e => {
     const o = currentArr().find(x => digits(x.orderNo) === el.dataset.no && String(x.by || '').toLowerCase() === el.dataset.by);
     if (!o) return;
-    if (selMode){ if (o.tracking) return; const n = digits(o.orderNo); if (picked.has(n)) picked.delete(n); else picked.add(n); el.classList.toggle('picked'); updBulk(); return; }
+    if (selMode){ if (!isLahoreRider(o)) return; const n = digits(o.orderNo); if (picked.has(n)) picked.delete(n); else picked.add(n); el.classList.toggle('picked'); updBulk(); return; }
     if (e.target.closest('.star')){ if (tab === 'hl' && !isMine(o)) removeOther(o); else toggleHl(o); return; }
     listScroll = window.scrollY;
     orders = [o]; sel = 0; view = 'detail'; render(); window.scrollTo({top:0});
@@ -715,7 +750,7 @@ function render(){
 
   let h = '<button type="button" class="back" id="back">&larr; Lists</button>';
   if (orders.length > 1){
-    h += '<p class="count">' + orders.length + ' orders mile hain. Naya order sab se pehle hai.</p><div class="chips">';
+    h += '<p class="count">' + orders.length + ' orders found. Newest first.</p><div class="chips">';
     orders.forEach((x, i) => {
       h += '<button type="button" class="chip' + (i === sel ? ' on' : '') + '" data-i="' + i + '">#' + esc(x.orderNo) + '<small>' + esc(x.date) + '</small></button>';
     });
@@ -734,13 +769,13 @@ function render(){
     + row('Order date', esc(o.date || '-'))
     + (o.tracking
         ? '<div class="row"><dt>Tracking ID</dt><dd><div class="trk"><span>' + esc(o.tracking) + '</span><button type="button" class="copy" id="cpTrk">Copy</button></div></dd></div>'
-        : row('Tracking ID', 'Abhi nahi mili'))
+        : row('Tracking ID', 'Not assigned yet'))
     + row('Last synced', esc(o.synced || '-'))
     + '</dl>'
     + statusBox(o)
     + noteBox(o)
     + '<div class="msg"><h3>WhatsApp message</h3><pre>' + esc(msg) + '</pre>'
-    + '<button type="button" class="copy" id="cpMsg">Copy message</button></div>'
+    + '<button type="button" class="copy" id="cpMsg">Copy message</button>' + '</div>'
     + '</section>';
 
   $('main').innerHTML = h;
@@ -762,24 +797,24 @@ function row(k, v, cls){ return '<div class="row"><dt>' + k + '</dt><dd' + (cls 
 /* ---------- search ---------- */
 async function search(raw){
   const q = digits(raw);
-  if (q.length < 3){ toast('Kam az kam 3 digits likhein'); return; }
-  if (!API_URL || API_URL.indexOf('PASTE_') === 0){ showNote('App ka API link abhi set nahi hua.', true); return; }
+  if (q.length < 3){ toast('Enter at least 3 digits'); return; }
+  if (!API_URL || API_URL.indexOf('PASTE_') === 0){ showNote('The API link is not set.', true); return; }
   if (!getKey()){ showLogin(); return; }
 
   if (view === 'list') listScroll = window.scrollY;
   view = 'detail';
-  showNote('<div class="spin"></div>Dhoond raha hoon...');
+  showNote('<div class="spin"></div>Searching...');
   try{
     const d = await api({q: q});
-    if (!d.ok){ showNote(esc(d.error || 'Kuch masla aa gaya'), true, true); return; }
+    if (!d.ok){ showNote(esc(d.error || 'Something went wrong'), true, true); return; }
     setHl(d.hlSet); setNotes(d);
     if (!d.orders.length){
-      showNote('<b>' + esc(q) + '</b> ka koi order nahi mila.<br>Number, order no ya tracking ID dobara check karein.', false, true);
+      showNote('<b>' + esc(q) + '</b> did not match any order.<br>Check the number, order no or tracking ID.', false, true);
       return;
     }
     orders = d.orders; sel = 0; render(); window.scrollTo({top:0});
   }catch(e){
-    showNote('Internet ya link ka masla hai. Dobara try karein.', true, true);
+    showNote('Connection problem. Please try again.', true, true);
   }
 }
 
