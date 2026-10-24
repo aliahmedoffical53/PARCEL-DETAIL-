@@ -301,6 +301,14 @@ a.copy{display:inline-block;text-decoration:none}
 .dh b{font-size:12.5px}
 .back{font-size:13px;color:var(--muted)}
 .note{border:1px solid var(--line);box-shadow:none}
+.tabs{overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;min-width:74px}
+.stchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.stc{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:600;color:var(--ink)}
+.stc b{color:var(--muted);margin-left:4px}
+.stc.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.stc.on b{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -382,6 +390,7 @@ let orders = [], sel = 0;            // detail view data
 let view = 'list';                   // 'list' | 'detail'
 let lists = null, listsAt = 0;       // {out, last, lastDate, hl}
 let tab = 'out';
+let stData = null, stAt = 0, stSel = '', stBusy = false;
 let hlSet = new Set();
 let me = {name:'', admin:false}, myNotes = {};
 let listScroll = 0;
@@ -631,6 +640,7 @@ async function loadLists(force){
 }
 function showList(){
   view = 'list'; $('bar').classList.remove('show');
+  if (tab === 'status'){ renderStatusView(); setTimeout(() => window.scrollTo({top: listScroll}), 0); return; }
   if (lists && Date.now() - listsAt >= 120000){ renderList(); loadLists(true); return; }
   if (lists) renderList(); else loadLists(true);
   setTimeout(() => window.scrollTo({top: listScroll}), 0);
@@ -650,7 +660,7 @@ function liHTML(o){
     + '<div class="li-sub">' + esc(o.city || '-') + ' &middot; Rs ' + esc(o.cod || '0') + ' &middot; ' + esc(o.date || '') + tag + '</div>' + nl + '</div>'
     + '<span class="pill ' + st.cls + '">' + esc(st.text) + '</span>' + end + '</div>';
 }
-function currentArr(){ return !lists ? [] : (tab === 'out' ? lists.out : tab === 'last' ? lists.last : tab === 'lhr' ? (lists.lhr || []) : lists.hl); }
+function currentArr(){ if (tab === 'status') return stData ? stData.list : []; return !lists ? [] : (tab === 'out' ? lists.out : tab === 'last' ? lists.last : tab === 'lhr' ? (lists.lhr || []) : lists.hl); }
 /* ---------- PDF download (Out for Delivery / Highlighted) ---------- */
 function loadScript(src){
   return new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => no(new Error('load')); document.head.appendChild(el); });
@@ -690,15 +700,11 @@ async function downloadPdf(which){
 
 function renderList(){
   view = 'list'; $('bar').classList.remove('show');
+  if (tab === 'status'){ renderStatusView(); return; }
   if (!lists){ showNote('<div class="spin"></div>Loading...'); return; }
   const arr = currentArr();
   const canSel = me.admin && tab !== 'hl' && arr.some(isLahoreRider);
-  let h = '<div class="tabs">'
-    + tabBtn('out', lists.out.length, 'Out for Delivery')
-    + tabBtn('last', lists.last.length, 'Recent Orders')
-    + tabBtn('lhr', (lists.lhr || []).length, 'Lahore')
-    + tabBtn('hl', lists.hl.length, 'Highlighted')
-    + '</div>';
+  let h = tabsHTML();
 
   let sum;
   if (tab === 'out')       sum = arr.length + ' parcel &middot; COD Rs ' + sumCod(arr).toLocaleString('en-US');
@@ -718,7 +724,7 @@ function renderList(){
   }
   $('main').innerHTML = h;
 
-  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; selMode = false; picked.clear(); renderList(); }));
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; selMode = false; picked.clear(); if (tab === 'status') showStatus(); else renderList(); }));
   $('refresh').addEventListener('click', () => { toast('Refreshing...'); loadLists(true); });
   if ($('dl')) $('dl').addEventListener('click', () => downloadPdf(tab));
   if ($('selBtn')) $('selBtn').addEventListener('click', () => { selMode = !selMode; picked.clear(); renderList(); });
@@ -736,6 +742,58 @@ function groupHTML(arr){
   const g = {}, keys = [];
   arr.forEach(o => { const k = o.date || '-'; if (!g[k]){ g[k] = []; keys.push(k); } g[k].push(o); });
   return keys.map(k => '<div class="dh"><b>' + esc(k) + '</b><span>' + g[k].length + ' parcel &middot; COD Rs ' + sumCod(g[k]).toLocaleString('en-US') + '</span></div>' + g[k].map(liHTML).join('')).join('');
+}
+function tabsHTML(){
+  const L = lists || {out: [], last: [], lhr: [], hl: []};
+  return '<div class="tabs">'
+    + tabBtn('out', L.out.length, 'Out for Delivery')
+    + tabBtn('last', L.last.length, 'Recent Orders')
+    + tabBtn('lhr', (L.lhr || []).length, 'Lahore')
+    + tabBtn('hl', L.hl.length, 'Highlighted')
+    + tabBtn('status', stData ? stData.statuses.length : '\u00b7', 'By Status')
+    + '</div>';
+}
+function showStatus(){
+  if (stData && Date.now() - stAt < 60000){ renderStatusView(); return; }
+  loadStatus(stSel);
+}
+async function loadStatus(sel){
+  if (!getKey()){ showLogin(); return; }
+  stBusy = true; renderStatusView();
+  try{
+    const d = await api({action: 'bystatus', status: sel || ''});
+    if (!d.ok) toast(d.error || 'Something went wrong');
+    else { stData = {statuses: d.statuses || [], list: d.list || [], total: d.total || 0}; stSel = sel || ''; stAt = Date.now(); }
+  }catch(e){ toast('No connection'); }
+  stBusy = false;
+  if (tab === 'status' && view === 'list') renderStatusView();
+}
+function renderStatusView(){
+  view = 'list'; $('bar').classList.remove('show'); $('bulk').classList.remove('show');
+  let h = tabsHTML();
+  if (!stData){
+    h += stBusy ? '<div class="note"><div class="spin"></div>Loading statuses...</div>'
+                : '<div class="note">Could not load statuses.<br><br><button type="button" class="copy" id="stRetry">Try again</button></div>';
+  } else {
+    h += '<div class="sum"><span>' + stData.total + ' parcels &middot; ' + stData.statuses.length + ' statuses</span><span><button type="button" class="refresh" id="stRefresh">Refresh</button></span></div>'
+      + '<div class="stchips">' + stData.statuses.map((x, i) => '<button type="button" class="stc' + (x.name === stSel ? ' on' : '') + '" data-i="' + i + '">' + esc(x.name) + ' <b>' + x.count + '</b></button>').join('') + '</div>';
+    if (!stSel) h += '<div class="note">Tap a status to see its parcels.</div>';
+    else if (stBusy) h += '<div class="note"><div class="spin"></div>Loading...</div>';
+    else if (!stData.list.length) h += '<div class="note">No parcels with this status.</div>';
+    else h += '<div class="sum"><span>' + esc(stSel) + ' &middot; ' + stData.list.length + ' parcels &middot; COD Rs ' + sumCod(stData.list).toLocaleString('en-US') + '</span></div>' + stData.list.map(liHTML).join('');
+  }
+  $('main').innerHTML = h;
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; selMode = false; picked.clear(); if (tab === 'status') showStatus(); else renderList(); }));
+  document.querySelectorAll('.stc').forEach(b => b.addEventListener('click', () => { const x = stData.statuses[+b.dataset.i]; if (x) loadStatus(x.name); }));
+  if ($('stRefresh')) $('stRefresh').addEventListener('click', () => { toast('Refreshing...'); loadStatus(stSel); });
+  if ($('stRetry')) $('stRetry').addEventListener('click', () => loadStatus(stSel));
+  document.querySelectorAll('.li').forEach(el => el.addEventListener('click', e => {
+    const o = (stData ? stData.list : []).find(x => digits(x.orderNo) === el.dataset.no);
+    if (!o) return;
+    if (e.target.closest('.star')){ toggleHl(o); return; }
+    listScroll = window.scrollY;
+    orders = [o]; sel = 0; view = 'detail'; render(); window.scrollTo({top: 0});
+  }));
 }
 function tabBtn(t, n, label){
   return '<button type="button" class="tab' + (tab === t ? ' on' : '') + '" data-t="' + t + '"><b>' + n + '</b><span>' + label + '</span></button>';
