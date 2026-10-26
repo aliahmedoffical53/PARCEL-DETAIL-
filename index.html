@@ -309,6 +309,80 @@ a.copy{display:inline-block;text-decoration:none}
 .stc b{color:var(--muted);margin-left:4px}
 .stc.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .stc.on b{color:var(--gold)}
+/* ===== v8: red / charcoal design, bottom nav, desktop portal ===== */
+:root{--navy:#23262C;--red:#D62839;--red-soft:#FDECEE;--bg:#F3F4F8;--line:#E8EAF0;--ink:#1B1F27;--muted:#7A8190;--shadow:0 1px 2px rgba(20,24,35,.04),0 4px 14px rgba(20,24,35,.06)}
+body{background:var(--bg);padding-bottom:92px}
+.top{background:linear-gradient(135deg,#2C2F36,#17191D);border-radius:0 0 22px 22px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 18px}
+.bl img{width:42px;height:42px;border-radius:12px}
+.brand h1{font-size:17px}
+.brand button{border-radius:999px;padding:6px 14px}
+.search input{height:46px;border-radius:14px;padding-left:42px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%237A8190' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") no-repeat 14px center}
+.search button{width:46px;height:46px;padding:0;font-size:0;border-radius:12px;background:var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") no-repeat center}
+.pg{font-size:18px;margin:4px 2px 12px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:none;padding:0;overflow:visible;margin-bottom:14px}
+.tab{min-width:0;flex:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 4px 8px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:1px;color:var(--muted)}
+.tab .ti{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab b{font-size:18px;color:var(--ink)}
+.tab span{font-size:10px;font-weight:600;text-align:center;line-height:1.15}
+.tab.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 6px 16px rgba(214,40,57,.28)}
+.tab.on b,.tab.on span{color:#fff}
+.sum{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 14px;box-shadow:var(--shadow);margin:0 0 12px;color:var(--ink);font-size:13px}
+.sum .refresh{border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--red);font-weight:700;padding:6px 12px}
+.li{border:0;box-shadow:var(--shadow);border-radius:14px;padding:13px 12px 13px 14px;margin-bottom:10px}
+.li-top b{color:var(--red);font-size:16px}
+.li.hl{border:0;box-shadow:inset 3px 0 0 #F2B01E,var(--shadow)}
+.star{color:#C9CCD6}.star.on{color:#F2B01E}
+.pill{background:#FFF3D6;color:#9A6A00}
+.pill.ok{background:#E3F6EA;color:#18864B}.pill.bad{background:#FDE7EA;color:#C7283C}.pill.run{background:#E4EEFF;color:#2563C9}
+.card{border:0;box-shadow:var(--shadow);border-radius:18px}
+.head .ono{font-size:26px}
+.stb.ok{background:#E8F7EE;border-color:#BFE3CF;color:#18864B}
+.stb.bad{background:#FDECEF;border-color:#F4C4CB;color:#C7283C}
+.stb.on{box-shadow:inset 0 0 0 2px currentColor}
+.bar a{height:50px;border-radius:14px}
+.bar .call{background:var(--red)}
+.bar .wa{background:#2B2E35;color:#fff;flex:1}
+.stc.ok{background:#E8F7EE;color:#18864B;border-color:#CBEBD8}
+.stc.bad{background:#FDECEF;color:#C7283C;border-color:#F4C4CB}
+.stc.run{background:#E4EEFF;color:#2563C9;border-color:#C9DBFA}
+.stc.pu{background:#F1EAFD;color:#6B3FC4;border-color:#DDD0F7}
+.stc.on{background:var(--red);border-color:var(--red);color:#fff}
+.stc.on b{color:#fff}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.bar.show ~ .bottomnav{display:none}
+.nv{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:#8A90A0;font-size:10.5px;font-weight:600}
+.nv svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nv.on{color:var(--red)}
+.sbrand{display:none}
+.toast{bottom:96px}
+.empty{text-align:center;padding:36px 24px;color:var(--muted)}
+.empty h3{color:var(--ink);margin:14px 0 6px;font-size:18px}
+.empty p{margin:0;font-size:13.5px;line-height:1.5}
+.prof{display:flex;align-items:center;gap:14px;padding:16px}
+.av{width:48px;height:48px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.prof b{display:block;font-size:16px}.prof span{color:var(--muted);font-size:13px}
+.setl{padding:4px 0}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:none;text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);color:var(--ink);font-size:14.5px;font-weight:600;text-decoration:none}
+.srow:last-child{border-bottom:0}
+.srow i{font-style:normal;color:#B3B8C4;font-size:20px}
+.srow small{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-top:2px}
+.btn-red{display:block;width:100%;height:50px;border:0;border-radius:14px;background:var(--red);color:#fff;font-weight:700;font-size:15px;margin-top:6px}
+@media (min-width:1000px){
+  body{padding-left:240px;padding-bottom:30px}
+  .bottomnav{top:0;right:auto;width:240px;flex-direction:column;justify-content:flex-start;gap:4px;padding:18px 14px;border-top:0;border-right:1px solid var(--line)}
+  .bar.show ~ .bottomnav{display:flex}
+  .sbrand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;font-weight:700;font-size:15px}
+  .sbrand img{width:38px;height:38px;border-radius:10px}
+  .nv{flex:none;flex-direction:row;gap:12px;font-size:14px;padding:12px 14px;border-radius:12px;justify-content:flex-start}
+  .nv.on{background:var(--red-soft)}
+  .bar,.bulk{left:240px}
+  .toast{bottom:30px}
+  .brand,.search{max-width:1000px;margin-left:auto;margin-right:auto}
+  main{max-width:1000px;display:grid;grid-template-columns:1fr 1fr;column-gap:14px;align-items:start}
+  main > *{grid-column:1/-1}
+  main > .li{grid-column:auto}
+  main > .card{max-width:760px}
+}
 </style>
 </head>
 <body>
@@ -352,6 +426,15 @@ a.copy{display:inline-block;text-decoration:none}
   </a>
 </nav>
 
+<nav class="bottomnav" id="nav">
+  <div class="sbrand"><img src="icon-192.png" alt="" onerror="this.style.display='none'"><span>Parcel Inspector</span></div>
+  <button class="nv on" data-n="home" type="button"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></button>
+  <button class="nv" data-n="status" type="button"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Statuses</span></button>
+  <button class="nv" data-n="search" type="button"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>Search</span></button>
+  <button class="nv" data-n="hl" type="button"><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21.1 7 14.2 2 9.3l6.9-1z"/></svg><span>Highlights</span></button>
+  <button class="nv" data-n="settings" type="button"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>Settings</span></button>
+</nav>
+
 <div class="bulk" id="bulk">
   <div class="bulk-top"><span id="bulkCount">0 selected</span><span><button type="button" id="bulkAll">Select all</button><button type="button" id="bulkX">Close</button></span></div>
   <div class="stbtns" id="bulkBtns">
@@ -389,7 +472,7 @@ const STAR = '<svg viewBox="0 0 24 24"><path d="M12 17.3l-5.6 3.3 1.5-6.3L3 9.9l
 let orders = [], sel = 0;            // detail view data
 let view = 'list';                   // 'list' | 'detail'
 let lists = null, listsAt = 0;       // {out, last, lastDate, hl}
-let tab = 'out';
+let tab = 'out', homeTab = 'out';
 let stData = null, stAt = 0, stSel = '', stBusy = false;
 let hlSet = new Set();
 let me = {name:'', admin:false}, myNotes = {};
@@ -440,7 +523,7 @@ function statusInfo(o){
   if (s === 'RETURNED')  return {cls:'bad', text:'Returned'};
   if (['CANCAL','CANCELLED','CANCELED'].includes(s)) return {cls:'bad', text:'Cancelled'};
   if (s.indexOf('RETURN') !== -1) return {cls:'bad', text:o.status};
-  if (s === 'PICKED') return {cls:'run', text:'Picked'};
+  if (s === 'PICKED') return {cls:'', text:'Picked'};
   if (s === 'PENDING') return {cls:'', text:'Pending'};
   if (s === 'BOOKED') return {cls:'', text:'Booked'};
   if (s.indexOf('OUT FOR') !== -1) return {cls:'run', text:o.status};
@@ -701,6 +784,7 @@ async function downloadPdf(which){
 function renderList(){
   view = 'list'; $('bar').classList.remove('show');
   if (tab === 'status'){ renderStatusView(); return; }
+  setNav(tab === 'hl' ? 'hl' : 'home');
   if (!lists){ showNote('<div class="spin"></div>Loading...'); return; }
   const arr = currentArr();
   const canSel = me.admin && tab !== 'hl' && arr.some(isLahoreRider);
@@ -724,7 +808,7 @@ function renderList(){
   }
   $('main').innerHTML = h;
 
-  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; selMode = false; picked.clear(); if (tab === 'status') showStatus(); else renderList(); }));
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; if (tab !== 'status') homeTab = tab; selMode = false; picked.clear(); if (tab === 'status') showStatus(); else renderList(); }));
   $('refresh').addEventListener('click', () => { toast('Refreshing...'); loadLists(true); });
   if ($('dl')) $('dl').addEventListener('click', () => downloadPdf(tab));
   if ($('selBtn')) $('selBtn').addEventListener('click', () => { selMode = !selMode; picked.clear(); renderList(); });
@@ -743,6 +827,7 @@ function groupHTML(arr){
   arr.forEach(o => { const k = o.date || '-'; if (!g[k]){ g[k] = []; keys.push(k); } g[k].push(o); });
   return keys.map(k => '<div class="dh"><b>' + esc(k) + '</b><span>' + g[k].length + ' parcel &middot; COD Rs ' + sumCod(g[k]).toLocaleString('en-US') + '</span></div>' + g[k].map(liHTML).join('')).join('');
 }
+const TI = {"out": "<path d=\"M1 3h15v13H1zM16 8h4l3 3v5h-7z\"/><circle cx=\"5.5\" cy=\"18.5\" r=\"2\"/><circle cx=\"18.5\" cy=\"18.5\" r=\"2\"/>", "last": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/>", "lhr": "<path d=\"M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>", "hl": "<path d=\"M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8 5.8 21.1 7 14.2 2 9.3l6.9-1z\"/>"};
 function tabsHTML(){
   const L = lists || {out: [], last: [], lhr: [], hl: []};
   return '<div class="tabs">'
@@ -750,8 +835,15 @@ function tabsHTML(){
     + tabBtn('last', L.last.length, 'Recent Orders')
     + tabBtn('lhr', (L.lhr || []).length, 'Lahore')
     + tabBtn('hl', L.hl.length, 'Highlighted')
-    + tabBtn('status', stData ? stData.statuses.length : '\u00b7', 'By Status')
     + '</div>';
+}
+function stCls(n){
+  const l = String(n).toLowerCase();
+  if (/out for/.test(l) || /route|transit/.test(l)) return 'run';
+  if (/deliver/.test(l)) return 'ok';
+  if (/return|cancel|reject|attempt/.test(l)) return 'bad';
+  if (/warehouse|picked|booked/.test(l)) return 'pu';
+  return '';
 }
 function showStatus(){
   if (stData && Date.now() - stAt < 60000){ renderStatusView(); return; }
@@ -769,21 +861,21 @@ async function loadStatus(sel){
   if (tab === 'status' && view === 'list') renderStatusView();
 }
 function renderStatusView(){
-  view = 'list'; $('bar').classList.remove('show'); $('bulk').classList.remove('show');
-  let h = tabsHTML();
+  view = 'list'; $('bar').classList.remove('show'); $('bulk').classList.remove('show'); setNav('status');
+  let h = '<h2 class="pg">By Status</h2>';
   if (!stData){
     h += stBusy ? '<div class="note"><div class="spin"></div>Loading statuses...</div>'
                 : '<div class="note">Could not load statuses.<br><br><button type="button" class="copy" id="stRetry">Try again</button></div>';
   } else {
     h += '<div class="sum"><span>' + stData.total + ' parcels &middot; ' + stData.statuses.length + ' statuses</span><span><button type="button" class="refresh" id="stRefresh">Refresh</button></span></div>'
-      + '<div class="stchips">' + stData.statuses.map((x, i) => '<button type="button" class="stc' + (x.name === stSel ? ' on' : '') + '" data-i="' + i + '">' + esc(x.name) + ' <b>' + x.count + '</b></button>').join('') + '</div>';
+      + '<div class="stchips">' + stData.statuses.map((x, i) => '<button type="button" class="stc ' + stCls(x.name) + (x.name === stSel ? ' on' : '') + '" data-i="' + i + '">' + esc(x.name) + ' <b>' + x.count + '</b></button>').join('') + '</div>';
     if (!stSel) h += '<div class="note">Tap a status to see its parcels.</div>';
     else if (stBusy) h += '<div class="note"><div class="spin"></div>Loading...</div>';
     else if (!stData.list.length) h += '<div class="note">No parcels with this status.</div>';
     else h += '<div class="sum"><span>' + esc(stSel) + ' &middot; ' + stData.list.length + ' parcels &middot; COD Rs ' + sumCod(stData.list).toLocaleString('en-US') + '</span></div>' + stData.list.map(liHTML).join('');
   }
   $('main').innerHTML = h;
-  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; selMode = false; picked.clear(); if (tab === 'status') showStatus(); else renderList(); }));
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; if (tab !== 'status') homeTab = tab; selMode = false; picked.clear(); if (tab === 'status') showStatus(); else renderList(); }));
   document.querySelectorAll('.stc').forEach(b => b.addEventListener('click', () => { const x = stData.statuses[+b.dataset.i]; if (x) loadStatus(x.name); }));
   if ($('stRefresh')) $('stRefresh').addEventListener('click', () => { toast('Refreshing...'); loadStatus(stSel); });
   if ($('stRetry')) $('stRetry').addEventListener('click', () => loadStatus(stSel));
@@ -796,7 +888,7 @@ function renderStatusView(){
   }));
 }
 function tabBtn(t, n, label){
-  return '<button type="button" class="tab' + (tab === t ? ' on' : '') + '" data-t="' + t + '"><b>' + n + '</b><span>' + label + '</span></button>';
+  return '<button type="button" class="tab' + (tab === t ? ' on' : '') + '" data-t="' + t + '"><svg class="ti" viewBox="0 0 24 24">' + (TI[t] || '') + '</svg><b>' + n + '</b><span>' + label + '</span></button>';
 }
 
 /* ---------- detail view ---------- */
@@ -914,6 +1006,42 @@ try{ me = {name: getUser(), admin: localStorage.getItem('rw_admin') === '1'}; }c
 setWho();
 try{ const c = JSON.parse(localStorage.getItem('rw_lists') || 'null'); if (c && c.out && c.last && c.hl && getUser()){ lists = c; rebuildMine(); } }catch(e){}
 if (!getKey() || !getUser()) showLogin(); else { if (lists) renderList(); loadLists(true); }
+
+/* ---------- bottom navigation, search and settings screens ---------- */
+function setNav(n){ document.querySelectorAll('.nv').forEach(b => b.classList.toggle('on', b.dataset.n === n)); }
+function navTo(n){
+  selMode = false; picked.clear(); $('bulk').classList.remove('show');
+  if (n === 'home'){ tab = homeTab === 'status' ? 'out' : homeTab; listScroll = 0; showList(); }
+  else if (n === 'status'){ tab = 'status'; showStatus(); }
+  else if (n === 'hl'){ tab = 'hl'; homeTab = 'hl'; listScroll = 0; showList(); }
+  else if (n === 'search') showSearchHome();
+  else if (n === 'settings') showSettings();
+}
+function showSearchHome(){
+  view = 'search'; $('bar').classList.remove('show'); setNav('search');
+  $('main').innerHTML = '<div class="empty"><svg width="120" height="120" viewBox="0 0 120 120" fill="none" stroke="#B3B8C4" stroke-width="3" stroke-linejoin="round"><path d="M20 40l35-16 35 16v38L55 94 20 78z"/><path d="M20 40l35 16 35-16M55 56v38"/><circle cx="82" cy="78" r="16" stroke="#D62839" fill="#fff"/><path d="M94 90l14 14" stroke="#D62839" stroke-linecap="round"/></svg>'
+    + '<h3>Search Parcel</h3><p>Enter the order number, the last 10 digits of the phone number or the tracking ID to find a parcel.</p></div>';
+  setTimeout(() => $('q').focus(), 60);
+}
+function showSettings(){
+  view = 'settings'; $('bar').classList.remove('show'); setNav('settings');
+  const n = me.name || getUser(), canInstall = (typeof installEvt !== 'undefined' && installEvt);
+  $('main').innerHTML = '<h2 class="pg">Settings</h2>'
+    + '<div class="card prof"><div class="av">' + esc((n || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(n) + '</b><span>' + (me.admin ? 'Admin' : 'Team member') + '</span></div></div>'
+    + '<div class="card setl">'
+    + (canInstall ? '<button type="button" class="srow" id="sInstall">Install app<i>&rsaquo;</i></button>' : '')
+    + '<button type="button" class="srow" id="sRefresh">Refresh data<i>&rsaquo;</i></button>'
+    + '<button type="button" class="srow" id="sClear">Clear saved data on this device<i>&rsaquo;</i></button>'
+    + (me.admin ? '<div class="srow">Users &amp; passwords<small>Managed in the master sheet &rsaquo; Users tab</small></div><div class="srow">Status log<small>Master sheet &rsaquo; StatusLog tab</small></div>' : '')
+    + '<a class="srow" target="_blank" rel="noopener" href="https://wa.me/923096302212">Help &amp; support<i>&rsaquo;</i></a>'
+    + '<div class="srow">About<small>Royal Welcome &middot; Parcel Inspector</small></div></div>'
+    + '<button type="button" class="btn-red" id="sOut">Logout</button>';
+  if ($('sInstall')) $('sInstall').addEventListener('click', () => $('install').click());
+  $('sRefresh').addEventListener('click', () => { toast('Refreshing...'); stData = null; loadLists(true); });
+  $('sClear').addEventListener('click', () => { try{ localStorage.removeItem('rw_lists'); }catch(e){} lists = null; stData = null; toast('Saved data cleared'); });
+  $('sOut').addEventListener('click', () => $('logout').click());
+}
+$('nav').addEventListener('click', e => { const b = e.target.closest('.nv'); if (b) navTo(b.dataset.n); });
 </script>
 </body>
 </html>
