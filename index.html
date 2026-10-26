@@ -383,6 +383,39 @@ body{background:var(--bg);padding-bottom:92px}
   main > .li{grid-column:auto}
   main > .card{max-width:760px}
 }
+/* ===== v9: polish, light graphics, animation, desktop overflow fix ===== */
+html,body{overflow-x:hidden}
+body{background-color:#F3F4F8;background-image:radial-gradient(rgba(35,38,44,.05) 1px,transparent 1px),radial-gradient(circle at 100% 0,rgba(214,40,57,.07),transparent 42%);background-size:18px 18px,auto;background-attachment:fixed}
+.top{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='160' viewBox='0 0 260 160' fill='none' stroke='white' stroke-opacity='.10' stroke-width='1.5'%3E%3Cpath d='M170 30l34-16 34 16v36l-34 16-34-16z'/%3E%3Cpath d='M170 30l34 16 34-16M204 46v36'/%3E%3Cpath d='M110 96l26-12 26 12v28l-26 12-26-12z'/%3E%3Cpath d='M110 96l26 12 26-12M136 108v28'/%3E%3Ccircle cx='60' cy='40' r='22'/%3E%3Ccircle cx='60' cy='40' r='38' stroke-dasharray='3 6'/%3E%3C/svg%3E"),radial-gradient(circle at 88% -10%,rgba(214,40,57,.40),transparent 52%),linear-gradient(135deg,#2C2F36,#17191D);background-repeat:no-repeat;background-position:right 8px top 6px,0 0,0 0;background-size:260px 160px,auto,auto;animation:drift 16s ease-in-out infinite}
+@keyframes drift{0%,100%{background-position:right 8px top 6px,0 0,0 0}50%{background-position:right 22px top 14px,0 0,0 0}}
+@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.tab,.card,.sum,.stc,.dh,.dfl,.pg,.note,.empty{animation:rise .3s ease both}
+.li{animation:rise .3s ease both;transition:transform .15s ease,box-shadow .2s ease}
+.li:nth-child(2){animation-delay:.04s}.li:nth-child(3){animation-delay:.08s}.li:nth-child(4){animation-delay:.12s}.li:nth-child(5){animation-delay:.16s}.li:nth-child(n+6){animation-delay:.2s}
+.tab:nth-child(2){animation-delay:.04s}.tab:nth-child(3){animation-delay:.08s}.tab:nth-child(4){animation-delay:.12s}
+.tab,.nv,.stc,.btn-red,.srow{transition:transform .15s ease,background-color .2s ease,color .2s ease,box-shadow .2s ease}
+.tab:active,.nv:active,.stc:active,.li:active{transform:scale(.97)}
+@media (hover:hover){.li:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(20,24,35,.10)}.tab:hover,.stc:hover{transform:translateY(-1px)}}
+.bl img{width:36px;height:36px;border-radius:10px}
+.brand h1{font-size:16px}
+.tab{padding:8px 3px 7px;border-radius:12px}
+.tab .ti{width:16px;height:16px}
+.tab b{font-size:16px;line-height:1.2}
+.tab span{font-size:9.5px}
+.nv{font-size:10px}
+.nv svg{width:20px;height:20px}
+.star svg{width:20px;height:20px}
+.sbrand img{width:34px;height:34px}
+.dfl{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px}
+.dfl label{flex:1;min-width:0;font-size:11.5px;font-weight:600;color:var(--muted)}
+.dfl input{display:block;width:100%;height:40px;border:1px solid var(--line);border-radius:10px;padding:0 10px;background:#fff;margin-top:4px;font:inherit;color:var(--ink)}
+.dfl .refresh{height:40px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--red);font-weight:700;padding:0 12px}
+@media (min-width:1000px){
+  main{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  main > *{min-width:0}
+  .top{padding-left:24px;padding-right:24px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -473,7 +506,7 @@ let orders = [], sel = 0;            // detail view data
 let view = 'list';                   // 'list' | 'detail'
 let lists = null, listsAt = 0;       // {out, last, lastDate, hl}
 let tab = 'out', homeTab = 'out';
-let stData = null, stAt = 0, stSel = '', stBusy = false;
+let stData = null, stAt = 0, stSel = '', stBusy = false, stFrom = '', stTo = '';
 let hlSet = new Set();
 let me = {name:'', admin:false}, myNotes = {};
 let listScroll = 0;
@@ -845,6 +878,45 @@ function stCls(n){
   if (/warehouse|picked|booked/.test(l)) return 'pu';
   return '';
 }
+function dateFilterHTML(){
+  return '<div class="dfl"><label>From<input type="date" id="stFrom" value="' + esc(stFrom) + '"></label><label>To<input type="date" id="stTo" value="' + esc(stTo) + '"></label>'
+    + ((stFrom || stTo) ? '<button type="button" class="refresh" id="stClr">Clear</button>' : '') + '</div>';
+}
+/* PDF sirf manager (admin) login mein */
+async function statusPdf(summary){
+  if (!me.admin || !stData) return;
+  toast('Creating PDF...');
+  try{
+    if (!(window.jspdf && window.jspdf.jsPDF)){
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+    }
+    const doc = new window.jspdf.jsPDF({orientation: summary ? 'portrait' : 'landscape', unit: 'pt', format: 'a4'});
+    const pad = n => String(n).padStart(2, '0'), now = new Date();
+    const day = pad(now.getDate()) + '-' + pad(now.getMonth() + 1) + '-' + now.getFullYear();
+    const dm = x => x ? x.split('-').reverse().join('/') : '';
+    const range = (stFrom || stTo) ? 'Date: ' + (dm(stFrom) || 'start') + ' to ' + (dm(stTo) || 'today') : 'All dates (latest orders)';
+    const HEAD = {fillColor: [35, 38, 44], textColor: [255, 255, 255]};
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+    doc.text('Royal Welcome - ' + (summary ? 'Status Summary' : stSel + ' Parcels'), 40, 42);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    if (summary){
+      doc.text(range + '   |   ' + stData.total + ' parcels   |   Generated ' + day, 40, 58);
+      doc.autoTable({startY: 70, theme: 'grid', styles: {fontSize: 10, cellPadding: 5}, headStyles: HEAD,
+        head: [['Status', 'Parcels', 'COD']],
+        body: stData.statuses.map(x => [x.name, x.count, 'Rs ' + Number(x.cod || 0).toLocaleString('en-US')]),
+        columnStyles: {1: {halign: 'right'}, 2: {halign: 'right'}}});
+    } else {
+      const L = stData.list;
+      doc.text(range + '   |   ' + L.length + ' parcels   |   Total COD: Rs ' + sumCod(L).toLocaleString('en-US') + '   |   Generated ' + day, 40, 58);
+      doc.autoTable({startY: 70, theme: 'grid', styles: {fontSize: 8.5, cellPadding: 4}, headStyles: HEAD, alternateRowStyles: {fillColor: [245, 247, 251]},
+        head: [['#', 'Order No', 'Name', 'Number', 'City', 'Amount', 'Tracking ID', 'Booking Date']],
+        body: L.map((o, i) => [i + 1, o.orderNo, o.name || '', prettyPhone(o.number), o.city || '', 'Rs ' + (o.cod || 0), o.tracking || '-', o.date || '']),
+        columnStyles: {0: {cellWidth: 24}, 5: {halign: 'right'}}});
+    }
+    doc.save((summary ? 'Status_Summary_' : 'Status_' + stSel.replace(/[^A-Za-z0-9]+/g, '_') + '_') + day + '.pdf');
+  }catch(e){ toast('Could not create the PDF. Check your internet.'); }
+}
 function showStatus(){
   if (stData && Date.now() - stAt < 60000){ renderStatusView(); return; }
   loadStatus(stSel);
@@ -853,7 +925,7 @@ async function loadStatus(sel){
   if (!getKey()){ showLogin(); return; }
   stBusy = true; renderStatusView();
   try{
-    const d = await api({action: 'bystatus', status: sel || ''});
+    const d = await api({action: 'bystatus', status: sel || '', from: stFrom, to: stTo});
     if (!d.ok) toast(d.error || 'Something went wrong');
     else { stData = {statuses: d.statuses || [], list: d.list || [], total: d.total || 0}; stSel = sel || ''; stAt = Date.now(); }
   }catch(e){ toast('No connection'); }
@@ -862,12 +934,14 @@ async function loadStatus(sel){
 }
 function renderStatusView(){
   view = 'list'; $('bar').classList.remove('show'); $('bulk').classList.remove('show'); setNav('status');
-  let h = '<h2 class="pg">By Status</h2>';
+  let h = '<h2 class="pg">By Status</h2>' + dateFilterHTML();
   if (!stData){
     h += stBusy ? '<div class="note"><div class="spin"></div>Loading statuses...</div>'
                 : '<div class="note">Could not load statuses.<br><br><button type="button" class="copy" id="stRetry">Try again</button></div>';
   } else {
-    h += '<div class="sum"><span>' + stData.total + ' parcels &middot; ' + stData.statuses.length + ' statuses</span><span><button type="button" class="refresh" id="stRefresh">Refresh</button></span></div>'
+    h += '<div class="sum"><span>' + stData.total + ' parcels &middot; ' + stData.statuses.length + ' statuses' + ((stFrom || stTo) ? ' (filtered)' : '') + '</span><span>'
+      + (me.admin ? '<button type="button" class="refresh" id="stPdf2">Summary PDF</button> ' + (stSel && stData.list.length ? '<button type="button" class="refresh" id="stPdf">PDF</button> ' : '') : '')
+      + '<button type="button" class="refresh" id="stRefresh">Refresh</button></span></div>'
       + '<div class="stchips">' + stData.statuses.map((x, i) => '<button type="button" class="stc ' + stCls(x.name) + (x.name === stSel ? ' on' : '') + '" data-i="' + i + '">' + esc(x.name) + ' <b>' + x.count + '</b></button>').join('') + '</div>';
     if (!stSel) h += '<div class="note">Tap a status to see its parcels.</div>';
     else if (stBusy) h += '<div class="note"><div class="spin"></div>Loading...</div>';
@@ -879,6 +953,11 @@ function renderStatusView(){
   document.querySelectorAll('.stc').forEach(b => b.addEventListener('click', () => { const x = stData.statuses[+b.dataset.i]; if (x) loadStatus(x.name); }));
   if ($('stRefresh')) $('stRefresh').addEventListener('click', () => { toast('Refreshing...'); loadStatus(stSel); });
   if ($('stRetry')) $('stRetry').addEventListener('click', () => loadStatus(stSel));
+  if ($('stFrom')) $('stFrom').addEventListener('change', e => { stFrom = e.target.value; loadStatus(stSel); });
+  if ($('stTo')) $('stTo').addEventListener('change', e => { stTo = e.target.value; loadStatus(stSel); });
+  if ($('stClr')) $('stClr').addEventListener('click', () => { stFrom = stTo = ''; loadStatus(stSel); });
+  if ($('stPdf')) $('stPdf').addEventListener('click', () => statusPdf(false));
+  if ($('stPdf2')) $('stPdf2').addEventListener('click', () => statusPdf(true));
   document.querySelectorAll('.li').forEach(el => el.addEventListener('click', e => {
     const o = (stData ? stData.list : []).find(x => digits(x.orderNo) === el.dataset.no);
     if (!o) return;
